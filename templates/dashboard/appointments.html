@@ -1,0 +1,73 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Appointments{% endblock %}
+
+{% block content %}
+
+<header class="dashboard-header">
+    <div>
+        <p class="eyebrow">Management</p>
+        <h1>Appointments</h1>
+    </div>
+
+    <a href="{% url 'manual_appointment' %}" class="primary-button">
+        + Programare
+    </a>
+</header>
+
+<section class="agenda-section">
+
+    {% for appointment in appointments %}
+
+        <div class="appointment-management-row">
+
+            <div class="appointment-date">
+                <strong>{{ appointment.date|date:"d.m.Y" }}</strong>
+                <span>{{ appointment.time|time:"H:i" }}</span>
+            </div>
+
+            <div>
+                <strong>{{ appointment.patient_name }}</strong>
+                <span>{{ appointment.patient_phone }}</span>
+            </div>
+
+            <div>
+                {{ appointment.service.name }}
+            </div>
+
+            <div>
+                <span class="status status-{{ appointment.status }}">
+                    {{ appointment.get_status_display }}
+                </span>
+            </div>
+
+            <div class="row-actions">
+
+                <a href="{% url 'appointment_edit' appointment.id %}">
+                    Editează
+                </a>
+
+                <form
+                    method="post"
+                    action="{% url 'appointment_delete' appointment.id %}"
+                    onsubmit="return confirm('Ștergi această programare?');"
+                >
+                    {% csrf_token %}
+                    <button type="submit" class="delete-link">
+                        Șterge
+                    </button>
+                </form>
+
+            </div>
+
+        </div>
+
+    {% empty %}
+
+        <p>Nu există programări.</p>
+
+    {% endfor %}
+
+</section>
+
+{% endblock %}

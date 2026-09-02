@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Date programare{% endblock %}
+
+{% block content %}
+<h1>Finalizează programarea</h1>
+
+<p>
+    {{ service.name }}<br>
+    {{ date }}<br>
+    {{ time|time:"H:i" }}
+</p>
+
+<form method="post" action="{% url 'create_appointment' %}">
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <input type="hidden" name="service" value="{{ service.id }}">
+    <input type="hidden" name="date" value="{{ date|date:'Y-m-d' }}">
+    <input type="hidden" name="time" value="{{ time|time:'H:i' }}">
+
+    <button type="submit">
+        Trimite cererea
+    </button>
+</form>
+{% endblock %}

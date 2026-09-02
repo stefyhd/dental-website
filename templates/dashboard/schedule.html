@@ -1,0 +1,111 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Schedule{% endblock %}
+
+{% block content %}
+
+<header class="dashboard-header">
+    <div>
+        <p class="eyebrow">Management</p>
+        <h1>Schedule</h1>
+    </div>
+</header>
+
+
+<section class="agenda-section">
+    <h2>Program săptămânal</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ hours_formset.management_form }}
+
+        <div class="schedule-days">
+            {% for form in hours_formset %}
+                {{ form.id }}
+
+                <div class="schedule-day {% if form.is_closed.value %}is-closed{% endif %}">
+                    <strong>{{ form.instance.get_weekday_display }}</strong>
+
+                    <div class="schedule-main">
+                        <div class="schedule-times">
+                            {{ form.opening_time }}
+                            <span>—</span>
+                            {{ form.closing_time }}
+                        </div>
+
+                        <span class="closed-text">Închis</span>
+                    </div>
+
+                    <label class="closed-toggle">
+                        {{ form.is_closed }}
+                        Închis
+                    </label>
+                </div>
+            {% endfor %}
+        </div>
+
+        <button type="submit" name="save_hours" class="primary-button">
+            Salvează programul
+        </button>
+    </form>
+</section>
+
+
+<section class="agenda-section">
+    <h2>Blochează un interval</h2>
+
+    <form method="post">
+        {% csrf_token %}
+
+        {{ block_form.as_p }}
+
+        <button type="submit" name="add_block" class="primary-button">
+            Adaugă blocare
+        </button>
+    </form>
+</section>
+
+
+<section class="agenda-section">
+    <h2>Blocări viitoare</h2>
+
+    {% for block in blocks %}
+        <div class="schedule-block-row">
+
+            <div>
+                <strong>
+                    {{ block.date|date:"d.m.Y" }}
+
+                    {% if block.end_date and block.end_date != block.date %}
+                        – {{ block.end_date|date:"d.m.Y" }}
+                    {% endif %}
+                </strong>
+
+                {% if block.all_day %}
+                    <span>Toată ziua</span>
+                {% else %}
+                    <span>
+                        {{ block.start_time|time:"H:i" }} –
+                        {{ block.end_time|time:"H:i" }}
+                    </span>
+                {% endif %}
+
+                {% if block.reason %}
+                    <span>· {{ block.reason }}</span>
+                {% endif %}
+            </div>
+
+            <form method="post" action="{% url 'delete_schedule_block' block.id %}">
+                {% csrf_token %}
+                <button type="submit" class="reject-button">
+                    Șterge
+                </button>
+            </form>
+
+        </div>
+    {% empty %}
+        <p>Nu există intervale blocate.</p>
+    {% endfor %}
+</section>
+
+{% endblock %}

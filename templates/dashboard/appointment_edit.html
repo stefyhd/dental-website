@@ -1,0 +1,32 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Editează programarea{% endblock %}
+
+{% block content %}
+
+<header class="dashboard-header">
+    <div>
+        <p class="eyebrow">Appointments</p>
+        <h1>Editează programarea</h1>
+    </div>
+</header>
+
+<section class="form-card">
+
+    <form method="post">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit" class="primary-button">
+            Salvează
+        </button>
+
+        <a href="{% url 'dashboard_appointments' %}">
+            Anulează
+        </a>
+    </form>
+
+</section>
+
+{% endblock %}

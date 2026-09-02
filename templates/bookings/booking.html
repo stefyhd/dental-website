@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Programare{% endblock %}
+
+{% block content %}
+<h1>Programează-te</h1>
+
+<form method="get">
+    <label>Serviciu</label>
+
+    <select name="service" required>
+        <option value="">Alege serviciul</option>
+
+        {% for service in services %}
+            <option value="{{ service.id }}"
+                {% if selected_service.id == service.id %}selected{% endif %}>
+                {{ service.name }} — {{ service.duration }} min
+            </option>
+        {% endfor %}
+    </select>
+
+    <label>Data</label>
+
+    <input
+        type="date"
+        name="date"
+        value="{{ selected_date|date:'Y-m-d' }}"
+        required
+    >
+
+    <button type="submit">Vezi orele disponibile</button>
+</form>
+
+{% if selected_service and selected_date %}
+    <h2>Ore disponibile</h2>
+
+    {% for slot in slots %}
+        <form method="get" action="{% url 'booking_details' %}">
+            <input type="hidden" name="service" value="{{ selected_service.id }}">
+            <input type="hidden" name="date" value="{{ selected_date|date:'Y-m-d' }}">
+            <input type="hidden" name="time" value="{{ slot|time:'H:i' }}">
+
+            <button type="submit">
+                {{ slot|time:"H:i" }}
+            </button>
+        </form>
+    {% empty %}
+        <p>Nu există ore disponibile în această zi.</p>
+    {% endfor %}
+{% endif %}
+{% endblock %}

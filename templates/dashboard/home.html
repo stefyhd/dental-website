@@ -1,0 +1,188 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Today{% endblock %}
+
+{% block content %}
+
+<header class="dashboard-header">
+    <div>
+        <p class="eyebrow">Dashboard</p>
+        <h1>Today</h1>
+    </div>
+
+    <a href="{% url 'manual_appointment' %}" class="primary-button">
+        + Programare manuală
+    </a>
+</header>
+
+
+<section class="pending-section">
+    <div class="section-heading">
+        <h2>Pending reservations</h2>
+        <span class="count-badge">{{ pending_count }}</span>
+    </div>
+
+    <div class="pending-list">
+
+        {% for appointment in pending %}
+
+            <article class="pending-card">
+                <div>
+                    <strong>{{ appointment.patient_name }}</strong>
+
+                    <p>
+                        {{ appointment.service.name }}
+                        ·
+                        {{ appointment.date|date:"d.m.Y" }}
+                        ·
+                        {{ appointment.time|time:"H:i" }}
+                    </p>
+                </div>
+
+                <div class="pending-actions">
+
+                    <form method="post"
+                          action="{% url 'confirm_appointment' appointment.id %}">
+
+                        {% csrf_token %}
+
+                        <input type="hidden"
+                               name="return_date"
+                               value="{{ selected_date|date:'Y-m-d' }}">
+
+                        <button class="confirm-button">
+                            Confirmă
+                        </button>
+                    </form>
+
+
+                    <form method="post"
+                          action="{% url 'reject_appointment' appointment.id %}">
+
+                        {% csrf_token %}
+
+                        <input type="hidden"
+                               name="return_date"
+                               value="{{ selected_date|date:'Y-m-d' }}">
+
+                        <button class="reject-button">
+                            Respinge
+                        </button>
+                    </form>
+
+                </div>
+            </article>
+
+        {% empty %}
+
+            <p class="empty-message">
+                Nu există programări în așteptare.
+            </p>
+
+        {% endfor %}
+
+    </div>
+</section>
+
+
+<section class="agenda-section">
+
+    <div class="agenda-header">
+
+        <div>
+            <p class="eyebrow">Agenda</p>
+            <h2>{{ selected_date|date:"l, d F Y" }}</h2>
+        </div>
+
+
+        <div class="date-navigation">
+
+            <a href="?date={{ previous_date|date:'Y-m-d' }}">
+                ←
+            </a>
+
+            <a href="{% url 'dashboard_home' %}">
+                Azi
+            </a>
+
+            <a href="?date={{ next_date|date:'Y-m-d' }}">
+                →
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <div class="agenda-table">
+
+        {% for row in agenda %}
+
+            <div class="agenda-row">
+
+                <div class="agenda-time">
+                    {{ row.time|time:"H:i" }}
+                </div>
+
+
+                <div class="agenda-content">
+                    {% for block in row.blocks %}
+                        <div class="agenda-block">
+                            <strong>INDISPONIBIL</strong>
+
+                            <span>
+                                {% if block.reason %}
+                                    {{ block.reason }}
+                                {% else %}
+                                    Interval blocat
+                                {% endif %}
+                            </span>
+                        </div>
+                    {% endfor %}
+
+                    {% for item in row.appointments %}
+
+                        {% if item.starts_here %}
+
+                            <div class="agenda-appointment">
+
+                                <strong>
+                                    {{ item.appointment.patient_name }}
+                                </strong>
+
+                                <span>
+                                    {{ item.appointment.service.name }}
+                                </span>
+
+                                <span class="status status-{{ item.appointment.status }}">
+                                    {{ item.appointment.get_status_display }}
+                                </span>
+
+                            </div>
+
+                        {% else %}
+
+                            <div class="agenda-continuation">
+                                ↳ {{ item.appointment.patient_name }}
+                            </div>
+
+                        {% endif %}
+
+
+                    {% endfor %}
+
+                    {% if not row.appointments and not row.blocks %}
+                        <span class="agenda-free">-</span>
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+{% endblock %}

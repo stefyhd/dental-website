@@ -1,0 +1,78 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Services{% endblock %}
+
+{% block content %}
+
+<header class="dashboard-header">
+    <div>
+        <p class="eyebrow">Management</p>
+        <h1>Services</h1>
+    </div>
+
+    <a href="{% url 'service_create' %}" class="primary-button">
+        + Serviciu
+    </a>
+</header>
+
+<section class="agenda-section">
+
+    {% for service in services %}
+
+        <div class="service-row">
+
+            <div>
+                <strong>{{ service.name }}</strong>
+
+                <span>
+                    {{ service.duration }} min
+                </span>
+            </div>
+
+            <div>
+                {% if service.price %}
+                    {{ service.price }} lei
+                {% else %}
+                    —
+                {% endif %}
+            </div>
+
+            <div>
+                {% if service.is_active %}
+                    <span class="status status-confirmed">Activ</span>
+                {% else %}
+                    <span class="status">Inactiv</span>
+                {% endif %}
+            </div>
+
+            <div class="row-actions">
+
+                <a href="{% url 'service_edit' service.id %}">
+                    Editează
+                </a>
+
+                <form
+                    method="post"
+                    action="{% url 'service_delete' service.id %}"
+                    onsubmit="return confirm('Ștergi acest serviciu?');"
+                >
+                    {% csrf_token %}
+
+                    <button type="submit" class="delete-link">
+                        Șterge
+                    </button>
+                </form>
+
+            </div>
+
+        </div>
+
+    {% empty %}
+
+        <p>Nu există servicii.</p>
+
+    {% endfor %}
+
+</section>
+
+{% endblock %}
