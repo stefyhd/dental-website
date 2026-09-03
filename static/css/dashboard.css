@@ -1005,3 +1005,15 @@ textarea:focus {
         grid-template-columns: 1fr auto;
     }
 }
+
+.overlap-warning {
+    background: var(--color-warning);
+    color: var(--color-warning-text);
+    border-radius: var(--radius-medium);
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+}

@@ -1,20 +1,13 @@
-from django import forms
-from bookings.models import Appointment, Patient, ScheduleBlock, Service, WorkingHours
-import phonenumbers
-
-from phonenumber_field.formfields import SplitPhoneNumberField
-from bookings.patient_utils import split_phone_initial
 from datetime import date as date_type, datetime
 
+import phonenumbers
+from django import forms
 from django.utils import timezone
+from phonenumber_field.formfields import SplitPhoneNumberField
 
 from bookings.appointment_utils import appointment_has_ended
-from bookings.schedule_utils import get_manual_time_choices
-from datetime import date as date_type, datetime
-
-from django import forms
-from django.utils import timezone
-
+from bookings.models import Appointment, Patient, ScheduleBlock, Service, WorkingHours
+from bookings.patient_utils import split_phone_initial
 from bookings.schedule_utils import (
     get_manual_time_choices,
     get_schedule_time_choices,

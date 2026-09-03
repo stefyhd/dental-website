@@ -1,25 +1,18 @@
-from datetime import datetime, time, timedelta
-
-import phonenumbers
-from rapidfuzz import fuzz
-
-from django.contrib import messages
-from django.contrib.admin.views.decorators import staff_member_required
-from django.db.models import Q
-from django.http import HttpResponseBadRequest, JsonResponse
-from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse
-from django.utils import timezone
-from django.views.decorators.http import require_POST
+from django.forms import modelformset_factory
 
 from bookings.appointment_utils import appointment_has_ended, update_past_appointments
+from bookings.booking_utils import get_schedule_blocks, slot_is_available
 from bookings.models import Appointment, Patient, ScheduleBlock, Service, WorkingHours
 from bookings.patient_utils import (
     get_or_create_patient,
     normalize_phone,
     split_phone_initial,
 )
-from bookings.schedule_utils import get_manual_time_choices
+from bookings.schedule_utils import (
+    SLOT_MINUTES,
+    get_manual_time_choices,
+    get_schedule_time_choices,
+)
 
 from .forms import (
     AppointmentEditForm,
@@ -29,13 +22,19 @@ from .forms import (
     ServiceForm,
     WorkingHoursForm,
 )
-from django.forms import modelformset_factory
-from bookings.schedule_utils import (
-    get_manual_time_choices,
-    get_schedule_time_choices,
-)
+from datetime import datetime, time, timedelta
 
-SLOT_MINUTES = 30
+from django.contrib import messages
+from django.contrib.admin.views.decorators import staff_member_required
+from django.db.models import Q
+from django.http import HttpResponseBadRequest, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
+from django.utils import timezone
+from django.views.decorators.http import require_POST
+import phonenumbers
+from rapidfuzz import fuzz
+
 
 @staff_member_required(login_url="dashboard_login")
 def schedule_block_times(request):
@@ -78,19 +77,15 @@ def build_agenda(selected_date):
     appointments = list(
         Appointment.objects
         .filter(date=selected_date)
-        .exclude(status=Appointment.Status.REJECTED)
+        .exclude(status__in=[
+            Appointment.Status.REJECTED,
+            Appointment.Status.CANCELLED,
+        ])
         .select_related("patient", "service")
         .order_by("time", "id")
     )
 
-    blocks = list(
-        ScheduleBlock.objects
-        .filter(date__lte=selected_date)
-        .filter(
-            Q(end_date__gte=selected_date) |
-            Q(end_date__isnull=True, date=selected_date)
-        )
-    )
+    blocks = list(get_schedule_blocks(selected_date))
 
     if working_hours and not working_hours.is_closed:
         agenda_start = datetime.combine(
@@ -114,6 +109,9 @@ def build_agenda(selected_date):
 
     for block in blocks:
         if block.all_day:
+            continue
+
+        if block.start_time is None or block.end_time is None:
             continue
 
         start = datetime.combine(selected_date, block.start_time)
@@ -146,6 +144,9 @@ def build_agenda(selected_date):
         for block in blocks:
             if block.all_day:
                 block_matches.append(block)
+                continue
+
+            if block.start_time is None or block.end_time is None:
                 continue
 
             block_start = datetime.combine(selected_date, block.start_time)
@@ -260,7 +261,7 @@ def home(request):
     pending = (
         Appointment.objects
         .filter(status=Appointment.Status.PENDING)
-        .select_related("service")
+        .select_related("patient", "service")
         .order_by("date", "time")
     )
 
@@ -272,7 +273,6 @@ def home(request):
         "pending": pending,
         "pending_count": pending.count(),
     })
-
 
 @require_POST
 @staff_member_required(login_url="dashboard_login")
@@ -312,6 +312,23 @@ def manual_appointment(request):
         form = ManualAppointmentForm(request.POST)
 
         if form.is_valid():
+            # Medicul are voie să suprapună programări, dar nu din greșeală.
+            # Prima trimitere avertizează; a doua (cu "allow_overlap") execută.
+            overlap = not slot_is_available(
+                form.cleaned_data["date"],
+                form.cleaned_data["time"],
+                form.cleaned_data["service"].duration,
+            )
+
+            if overlap and "allow_overlap" not in request.POST:
+                return render(request, "dashboard/manual_appointment.html", {
+                    "form": form,
+                    "overlap_warning": (
+                        "Intervalul se suprapune cu o altă programare "
+                        "sau cu un interval blocat."
+                    ),
+                })
+
             phone = normalize_phone(form.cleaned_data["patient_phone"])
             patient = None
 
@@ -397,14 +414,13 @@ def appointments(request):
     update_past_appointments()
     appointments = (
         Appointment.objects
-        .select_related("service")
+        .select_related("patient", "service")
         .order_by("-date", "-time")
     )
 
     return render(request, "dashboard/appointments.html", {
         "appointments": appointments,
     })
-
 
 @staff_member_required(login_url="dashboard_login")
 def schedule(request):
@@ -424,28 +440,38 @@ def schedule(request):
         extra=0,
     )
 
+    # Pagina are DOUĂ formulare care trimit către aceeași adresă.
+    # Fiecare se leagă la POST doar dacă butonul lui a fost apăsat —
+    # altfel celălalt primește date care nu-i aparțin și se golește.
+    saving_hours = "save_hours" in request.POST
+    adding_block = "add_block" in request.POST
+
     hours_formset = HoursFormSet(
-        request.POST or None,
+        request.POST if saving_hours else None,
         queryset=WorkingHours.objects.all(),
         prefix="hours",
     )
 
     block_form = ScheduleBlockForm(
-        request.POST or None,
+        request.POST if adding_block else None,
         prefix="block",
     )
 
-    if request.method == "POST":
-        if "save_hours" in request.POST and hours_formset.is_valid():
-            hours_formset.save()
-            return redirect("dashboard_schedule")
+    if saving_hours and hours_formset.is_valid():
+        hours_formset.save()
+        return redirect("dashboard_schedule")
 
-        if "add_block" in request.POST and block_form.is_valid():
-            block_form.save()
-            return redirect("dashboard_schedule")
+    if adding_block and block_form.is_valid():
+        block_form.save()
+        return redirect("dashboard_schedule")
 
+    today = timezone.localdate()
+
+    # O blocare pe mai multe zile rămâne activă până la end_date,
+    # chiar dacă a început în trecut.
     blocks = ScheduleBlock.objects.filter(
-        date__gte=timezone.localdate()
+        Q(end_date__gte=today) |
+        Q(end_date__isnull=True, date__gte=today)
     ).order_by("date", "start_time")
 
     return render(request, "dashboard/schedule.html", {
@@ -454,14 +480,6 @@ def schedule(request):
         "blocks": blocks,
     })
 
-
-@staff_member_required(login_url="dashboard_login")
-def services(request):
-    services = Service.objects.order_by("name")
-
-    return render(request, "dashboard/services.html", {
-        "services": services,
-    })
 
 @require_POST
 @staff_member_required(login_url="dashboard_login")

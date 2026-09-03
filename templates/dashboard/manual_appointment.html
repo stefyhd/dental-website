@@ -77,7 +77,21 @@
                     {{ form.non_field_errors }}
                 </div>
             {% endif %}
+            
+            {% if overlap_warning %}
+                <div class="overlap-warning">
+                    <strong>Atenție:</strong> {{ overlap_warning }}
 
+                    <button
+                        type="submit"
+                        name="allow_overlap"
+                        value="1"
+                        class="primary-button"
+                    >
+                        Adaugă oricum
+                    </button>
+                </div>
+            {% endif %}
 
             <button type="submit" class="primary-button">
                 Salvează programarea

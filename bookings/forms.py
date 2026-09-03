@@ -1,11 +1,6 @@
-from django import forms
-from phonenumber_field.formfields import SplitPhoneNumberField
 import phonenumbers
-
 from django import forms
 from phonenumber_field.formfields import SplitPhoneNumberField
-
-
 
 class AppointmentForm(forms.Form):
     patient_name = forms.CharField(

@@ -7,21 +7,56 @@
 
 <p>
     {{ service.name }}<br>
-    {{ date }}<br>
+    {{ date|date:"d.m.Y" }}<br>
     {{ time|time:"H:i" }}
 </p>
 
-<form method="post" action="{% url 'create_appointment' %}">
-    {% csrf_token %}
+{% if booking_error %}
 
-    {{ form.as_p }}
+    <div class="booking-error">
+        <p><strong>{{ booking_error }}</strong></p>
 
-    <input type="hidden" name="service" value="{{ service.id }}">
-    <input type="hidden" name="date" value="{{ date|date:'Y-m-d' }}">
-    <input type="hidden" name="time" value="{{ time|time:'H:i' }}">
+        {% if alternatives %}
+            <p>Ore libere în această zi:</p>
 
-    <button type="submit">
-        Trimite cererea
-    </button>
-</form>
+            {% for slot in alternatives %}
+                <a
+                    class="slot-link"
+                    href="{% url 'booking_details' %}?service={{ service.id }}&amp;date={{ date|date:'Y-m-d' }}&amp;time={{ slot|time:'H:i' }}"
+                >
+                    {{ slot|time:"H:i" }}
+                </a>
+            {% endfor %}
+        {% endif %}
+
+        <p>
+            <a href="{% url 'booking' %}?service={{ service.id }}&amp;date={{ date|date:'Y-m-d' }}">
+                Alege altă oră
+            </a>
+        </p>
+    </div>
+
+{% else %}
+
+    <form method="post" action="{% url 'create_appointment' %}">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="form-errors">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        {{ form.as_p }}
+
+        <input type="hidden" name="service" value="{{ service.id }}">
+        <input type="hidden" name="date" value="{{ date|date:'Y-m-d' }}">
+        <input type="hidden" name="time" value="{{ time|time:'H:i' }}">
+
+        <button type="submit">
+            Trimite cererea
+        </button>
+    </form>
+
+{% endif %}
 {% endblock %}
