@@ -26,6 +26,62 @@
     </form>
 </section>
 
+
+{% if family %}
+    <section class="agenda-section">
+        <h2>Aceeași familie</h2>
+
+        <p class="section-hint">
+            Alte fișe pe <strong>{{ patient.phone }}</strong>, ordonate după
+            cât seamănă cu fișa aceasta. Cele marcate „asemănător” pot fi
+            aceeași persoană scrisă altfel — verifică și contopește dacă e cazul.
+        </p>
+
+        {% for item in family %}
+            <div class="family-member-row">
+
+                <div class="family-member-name">
+                    <a href="{% url 'patient_detail' item.patient.id %}">
+                        <strong>{{ item.patient.name }}</strong>
+                    </a>
+
+                    {% if item.label %}
+                        <span class="similarity-badge">
+                            {{ item.label }}
+                        </span>
+                    {% endif %}
+                </div>
+
+                <span>
+                    {{ item.patient.appointments.count }} programări
+                </span>
+
+                <form
+                    method="post"
+                    action="{% url 'patient_merge' patient.id %}"
+                    onsubmit="return confirm('Muți „{{ item.patient.name|escapejs }}” în fișa „{{ patient.name|escapejs }}”? Programările se mută, iar fișa veche dispare. Operația nu poate fi anulată.');"
+                >
+                    {% csrf_token %}
+
+                    <input type="hidden" name="source_id" value="{{ item.patient.id }}">
+
+                    <button type="submit" class="merge-button">
+                        Contopește în fișa asta
+                    </button>
+                </form>
+
+            </div>
+        {% endfor %}
+
+        <p class="section-hint">
+            Contopește doar când sunt aceeași persoană cu două fișe (de exemplu
+            „Ana Prodan” și „An Marie Prodae”). Rudele reale rămân separate —
+            fiecare are nevoie de istoricul lui.
+        </p>
+    </section>
+{% endif %}
+
+
 <section class="agenda-section">
     <h2>Istoric programări</h2>
 

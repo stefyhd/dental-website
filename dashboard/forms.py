@@ -4,9 +4,17 @@ import phonenumbers
 from django import forms
 from django.utils import timezone
 from phonenumber_field.formfields import SplitPhoneNumberField
+from django.db.models import Q
 
 from bookings.appointment_utils import appointment_has_ended
-from bookings.models import Appointment, Patient, ScheduleBlock, Service, WorkingHours
+from bookings.models import (
+    Appointment,
+    Patient,
+    ScheduleBlock,
+    Service,
+    ServiceCategory,
+    WorkingHours,
+)
 from bookings.patient_utils import split_phone_initial
 from bookings.schedule_utils import (
     get_manual_time_choices,
@@ -136,10 +144,72 @@ class AppointmentEditForm(forms.ModelForm):
             ]
 
 
+class ServiceCategoryForm(forms.ModelForm):
+    class Meta:
+        model = ServiceCategory
+        fields = ["name", "description", "order", "is_active"]
+        labels = {
+            "name": "Nume categorie",
+            "description": "Descriere (apare pe site)",
+            "order": "Ordine de afișare",
+            "is_active": "Activă",
+        }
+        widgets = {
+            "description": forms.Textarea(attrs={
+                "rows": 3,
+                "placeholder": "Ex: Tratamente pentru menținerea sănătății gingiilor...",
+            }),
+        }
+
+
 class ServiceForm(forms.ModelForm):
     class Meta:
         model = Service
-        fields = ["name", "duration", "price", "is_active"]
+        fields = [
+            "name",
+            "category",
+            "description",
+            "duration",
+            "price",
+            "price_from",
+            "order",
+            "is_active",
+        ]
+        labels = {
+            "name": "Denumire serviciu",
+            "category": "Categorie",
+            "description": "Descriere (apare pe site)",
+            "duration": "Durată (minute)",
+            "price": "Preț (lei)",
+            "price_from": "Preț de pornire („de la…”)",
+            "order": "Ordine de afișare",
+            "is_active": "Activ",
+        }
+        widgets = {
+            "name": forms.TextInput(attrs={
+                "autocomplete": "off",
+                "placeholder": "Scrie câteva litere, ex: detar",
+            }),
+            "description": forms.Textarea(attrs={"rows": 3}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Doar categoriile active pot fi alese. Excepție: categoria pe care
+        # serviciul o are deja — altfel, la editarea unui serviciu dintr-o
+        # categorie dezactivată, salvarea i-ar șterge categoria pe tăcute.
+        current = getattr(self.instance, "category_id", None)
+
+        if current:
+            queryset = ServiceCategory.objects.filter(
+                Q(is_active=True) | Q(id=current)
+            )
+        else:
+            queryset = ServiceCategory.objects.filter(is_active=True)
+
+        self.fields["category"].queryset = queryset
+        self.fields["category"].empty_label = "— Fără categorie —"
 
 
 class WorkingHoursForm(forms.ModelForm):

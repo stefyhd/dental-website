@@ -16,7 +16,60 @@
     <form method="post">
         {% csrf_token %}
 
-        {{ form.as_p }}
+        <div class="form-field service-name-field">
+            {{ form.name.label_tag }}
+            {{ form.name }}
+            {{ form.name.errors }}
+
+            <div id="service-suggestions" class="patient-suggestions"></div>
+
+            <p class="section-hint">
+                Scrie câteva litere și alege din sugestii — categoria și
+                durata se completează singure.
+            </p>
+        </div>
+
+        <div class="form-field">
+            {{ form.category.label_tag }}
+            {{ form.category }}
+            {{ form.category.errors }}
+        </div>
+
+        <div class="form-field">
+            {{ form.description.label_tag }}
+            {{ form.description }}
+        </div>
+
+        <div class="form-field">
+            {{ form.duration.label_tag }}
+            {{ form.duration }}
+            {{ form.duration.errors }}
+        </div>
+
+        <div class="form-field">
+            {{ form.price.label_tag }}
+            {{ form.price }}
+            {{ form.price.errors }}
+        </div>
+
+        <div class="form-field">
+            <label class="checkbox-label">
+                {{ form.price_from }}
+                Preț de pornire („de la 2500 lei”)
+            </label>
+        </div>
+
+        <div class="form-field">
+            {{ form.order.label_tag }}
+            {{ form.order }}
+        </div>
+
+        <div class="form-field">
+            <label class="checkbox-label">
+                {{ form.is_active }}
+                Activ
+            </label>
+        </div>
 
         <button type="submit" class="primary-button">
             Salvează
@@ -28,5 +81,72 @@
     </form>
 
 </section>
+
+
+<script>
+const nameField = document.getElementById("id_name");
+const categoryField = document.getElementById("id_category");
+const durationField = document.getElementById("id_duration");
+const suggestionBox = document.getElementById("service-suggestions");
+
+let suggestTimer;
+
+function clearSuggestions() {
+    suggestionBox.innerHTML = "";
+}
+
+nameField.addEventListener("input", () => {
+    clearTimeout(suggestTimer);
+
+    const query = nameField.value.trim();
+
+    if (query.length < 2) {
+        clearSuggestions();
+        return;
+    }
+
+    // Așteptăm puțin după ultima tastă, ca să nu trimitem o cerere per literă.
+    suggestTimer = setTimeout(async () => {
+        const response = await fetch(
+            `{% url 'service_suggest' %}?q=${encodeURIComponent(query)}`
+        );
+
+        if (!response.ok) return;
+
+        const data = await response.json();
+
+        clearSuggestions();
+
+        for (const service of data.services) {
+            const item = document.createElement("button");
+            item.type = "button";
+            item.className = "patient-suggestion";
+
+            item.textContent = service.category_name
+                ? `${service.name} — ${service.category_name}`
+                : service.name;
+
+            item.addEventListener("click", () => {
+                nameField.value = service.name;
+                durationField.value = service.duration;
+
+                if (service.category_id) {
+                    categoryField.value = service.category_id;
+                }
+
+                clearSuggestions();
+            });
+
+            suggestionBox.appendChild(item);
+        }
+    }, 200);
+});
+
+document.addEventListener("click", (event) => {
+    if (!suggestionBox.contains(event.target) && event.target !== nameField) {
+        clearSuggestions();
+    }
+});
+</script>
 
 {% endblock %}

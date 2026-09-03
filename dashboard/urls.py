@@ -82,4 +82,29 @@ urlpatterns = [
         views.schedule_block_times,
         name="schedule_block_times",
     ),
+        path(
+        "services/suggest/",
+        views.service_suggest,
+        name="service_suggest",
+    ),
+    path(
+        "categories/new/",
+        views.category_create,
+        name="category_create",
+    ),
+    path(
+        "categories/<int:category_id>/edit/",
+        views.category_edit,
+        name="category_edit",
+    ),
+    path(
+        "categories/<int:category_id>/delete/",
+        views.category_delete,
+        name="category_delete",
+    ),
+    path(
+        "patients/<int:patient_id>/merge/",
+        views.patient_merge,
+        name="patient_merge",
+    ),
     ]

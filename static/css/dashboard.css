@@ -1,31 +1,42 @@
 :root {
     /* BRAND */
-    --color-primary: #1f614d;
-    --color-primary-dark: #163d32;
-    --color-primary-soft: #dcece4;
-    --color-accent: #d8b66a;
+    --color-primary: #2F5D50;
+    --color-primary-dark: #1F4339;
+    --color-primary-soft: #DCE8E2;
+
+    --color-accent: #6FA9B0;
+    --color-accent-dark: #4E7F86;
+    --color-accent-soft: #DDECEF;
 
     /* BASE */
-    --color-background: #f6f7f5;
-    --color-surface: #ffffff;
-    --color-text: #1c2420;
-    --color-text-secondary: #69736e;
-    --color-text-muted: #9aa19d;
-    --color-border: #e8ebe9;
+    --color-background: #F1F3F0;
+    --color-surface: #FCFDFB;
+    --color-surface-alt: #E9ECE8;
+
+    --color-text: #202925;
+    --color-text-secondary: #65706A;
+    --color-text-muted: #929B96;
+
+    --color-border: #DCE1DD;
+
+    /* OPTIONAL WARM ACCENT */
+    --color-beige: #EDE5D7;
 
     /* STATES */
-    --color-success: #dcece4;
-    --color-success-text: #315f50;
-    --color-warning: #f5ecd2;
-    --color-warning-text: #80691e;
-    --color-danger: #f4dddd;
-    --color-danger-text: #8c3030;
+    --color-success: #DCE8E2;
+    --color-success-text: #285548;
+
+    --color-warning: #F3E7C9;
+    --color-warning-text: #7A641F;
+
+    --color-danger: #F2DADA;
+    --color-danger-text: #914343;
 
     /* UI */
-    --color-input-background: #ffffff;
-    --color-navigation-background: #f0f2ef;
-    --color-badge-background: #ebe9df;
-    --color-on-primary: #ffffff;
+    --color-navigation-background: #E8ECE9;
+    --color-badge-background: #E4E9E5;
+    --color-input-background: #FCFDFB;
+    --color-on-primary: #FFFFFF;
 
     /* SHAPE */
     --radius-small: 7px;
@@ -1016,4 +1027,220 @@ textarea:focus {
     flex-direction: column;
     gap: 10px;
     align-items: flex-start;
+}
+
+.pending-section,
+.agenda-section,
+.form-card {
+    background: var(--color-surface);
+    border-radius: var(--radius-large);
+    padding: 24px;
+    margin-bottom: 24px;
+    border: 1px solid rgba(80, 60, 30, 0.06);
+    box-shadow:
+        0 2px 6px rgba(31, 43, 39, 0.04),
+        0 10px 24px rgba(31, 43, 39, 0.06);
+}
+
+.eyebrow {
+    margin: 0;
+    color: #6E746E;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+}
+
+.date-navigation a {
+    text-decoration: none;
+    color: var(--color-text);
+    padding: 8px 12px;
+    background: var(--color-navigation-background);
+    border: 1px solid rgba(47, 93, 80, 0.08);
+    border-radius: var(--radius-small);
+}
+
+.date-navigation a:hover {
+    background: #ddd4c6;
+}
+
+.count-badge {
+    background: var(--color-badge-background);
+    color: var(--color-text);
+    border-radius: 999px;
+    padding: 5px 10px;
+}
+
+.agenda-add {
+    width: 29px;
+    height: 29px;
+    display: inline-grid;
+    place-items: center;
+    border: 0;
+    border-radius: 50%;
+    background: #D5E2DB;
+    color: var(--color-primary-dark);
+    font-size: 19px;
+    line-height: 1;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   CATEGORII DE SERVICII / FAMILII DE PACIENȚI
+   ========================================================= */
+
+.header-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.secondary-button {
+    display: inline-block;
+    padding: 9px 16px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-medium);
+    background: var(--color-surface);
+    color: var(--color-text);
+    text-decoration: none;
+    font-size: 0.92rem;
+}
+
+.secondary-button:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+.section-hint {
+    margin: 4px 0 12px;
+    color: var(--color-text-secondary);
+    font-size: 0.88rem;
+}
+
+.empty-message {
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    padding: 8px 0;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+/* --- categorii --- */
+
+.category-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    padding-bottom: 12px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.category-header h2 {
+    margin: 0;
+}
+
+.category-inactive {
+    opacity: 0.62;
+}
+
+.service-description {
+    display: block;
+    color: var(--color-text-secondary);
+    font-size: 0.86rem;
+    margin-top: 2px;
+}
+
+.service-name-field {
+    position: relative;
+}
+
+/* --- familii --- */
+
+.family-group {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-large);
+    margin-bottom: 14px;
+    overflow: hidden;
+}
+
+.family-header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 11px 16px;
+    background: var(--color-navigation-background);
+}
+
+.family-phone {
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+}
+
+.family-count {
+    margin-left: auto;
+    background: var(--color-badge-background);
+    border-radius: 999px;
+    padding: 2px 10px;
+    font-size: 0.8rem;
+    color: var(--color-text-secondary);
+}
+
+.family-member-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.family-member-row:last-child {
+    border-bottom: none;
+}
+
+.merge-button {
+    background: none;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-small);
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+}
+
+.merge-button:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+
+.family-member-name {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.similarity-badge {
+    background: var(--color-warning);
+    color: var(--color-warning-text);
+    border-radius: 999px;
+    padding: 2px 10px;
+    font-size: 0.78rem;
+    white-space: nowrap;
+}
+
+.patient-row-single {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-large);
+    margin-bottom: 10px;
+    padding-left: 16px;
+    padding-right: 16px;
 }

@@ -1,0 +1,55 @@
+{% comment %}
+Un rând de serviciu. Inclus din services.html în două locuri — o dată în
+fiecare categorie și o dată la „Altele” — ca să nu duplicăm marcajul.
+Așteaptă în context variabila `service`.
+{% endcomment %}
+
+<div class="service-row">
+
+    <div>
+        <strong>{{ service.name }}</strong>
+
+        <span>{{ service.duration }} min</span>
+
+        {% if service.description %}
+            <span class="service-description">{{ service.description }}</span>
+        {% endif %}
+    </div>
+
+    <div>
+        {% if service.price_label %}
+            {{ service.price_label }}
+        {% else %}
+            —
+        {% endif %}
+    </div>
+
+    <div>
+        {% if service.is_active %}
+            <span class="status status-confirmed">Activ</span>
+        {% else %}
+            <span class="status">Inactiv</span>
+        {% endif %}
+    </div>
+
+    <div class="row-actions">
+
+        <a href="{% url 'service_edit' service.id %}">
+            Editează
+        </a>
+
+        <form
+            method="post"
+            action="{% url 'service_delete' service.id %}"
+            onsubmit="return confirm('Ștergi acest serviciu?');"
+        >
+            {% csrf_token %}
+
+            <button type="submit" class="delete-link">
+                Șterge
+            </button>
+        </form>
+
+    </div>
+
+</div>

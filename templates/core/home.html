@@ -1,12 +1,117 @@
-{% extends "base.html" %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cabinet Stomatologic</title>
+    <link rel="stylesheet" href="{% static 'css/public.css' %}">
+</head>
+<body>
 
-{% block title %}Acasă | Cabinet Stomatologic{% endblock %}
+    <header class="floating-navbar" id="floatingNavbar">
+        <div class="floating-navbar-inner">
+            <a href="{% url 'home' %}" class="nav-logo">Cabinet</a>
 
-{% block content %}
-<section>
-    <h1>Zâmbetul tău începe aici.</h1>
-    <p>Îngrijire stomatologică într-un mediu calm și modern.</p>
+            <nav class="nav-links">
+                <a href="#services">Servicii</a>
+            </nav>
 
-    <a href="/programari/">Programează-te</a>
-</section>
-{% endblock %}
+            <div class="nav-actions">
+                <div class="lang-switch">
+                    <button type="button" class="lang-button active">🇷🇴 RO</button>
+                    <button type="button" class="lang-button">🇬🇧 EN</button>
+                </div>
+
+                <a href="{% url 'booking' %}" class="nav-cta">Programează-te</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-top">
+                <a href="{% url 'home' %}" class="hero-logo">Cabinet</a>
+            </div>
+
+            <div class="hero-grid">
+                <div class="hero-content">
+                    <p class="hero-eyebrow">Cabinet stomatologic</p>
+
+                    <h1 class="hero-title">
+                        Îngrijire dentară<br>
+                        modernă, într-un<br>
+                        cabinet în care<br>
+                        grija vine firesc.
+                    </h1>
+
+                    <p class="hero-description">
+                        Tratamente adaptate fiecărui pacient, programări simple
+                        și comunicare directă pentru o experiență cât mai clară și liniștită.
+                    </p>
+
+                    <div class="hero-buttons">
+                        <a href="{% url 'booking' %}" class="button-primary">
+                            Programează-te
+                        </a>
+
+                        <a href="#contact" class="button-secondary">
+                            Contact
+                        </a>
+                    </div>
+
+                    <div class="hero-services-link">
+                        <a href="#services">Vezi serviciile <span>↘</span></a>
+                    </div>
+                </div>
+
+                <div class="hero-visual">
+                    <div class="hero-shape hero-shape-back"></div>
+                    <div class="hero-shape hero-shape-middle"></div>
+                    <div class="hero-shape hero-shape-front"></div>
+
+                    <div class="hero-tooth-wrap">
+                        <img
+                            src="{% static 'images/tooth.png' %}"
+                            alt="Dinte"
+                            class="hero-tooth"
+                        >
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="services" class="placeholder-section">
+            <div class="section-inner">
+                <p class="section-eyebrow">Servicii</p>
+                <h2>Servicii și prețuri</h2>
+                <p>Aici vine secțiunea de servicii.</p>
+            </div>
+        </section>
+
+        <section id="contact" class="placeholder-section alt">
+            <div class="section-inner">
+                <p class="section-eyebrow">Contact</p>
+                <h2>Contact</h2>
+                <p>Aici vine secțiunea de contact.</p>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const floatingNavbar = document.getElementById("floatingNavbar");
+
+        function toggleNavbar() {
+            if (window.scrollY > 80) {
+                floatingNavbar.classList.add("visible");
+            } else {
+                floatingNavbar.classList.remove("visible");
+            }
+        }
+
+        window.addEventListener("scroll", toggleNavbar);
+        toggleNavbar();
+    </script>
+
+</body>
+</html>

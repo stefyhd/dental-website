@@ -10,69 +10,91 @@
         <h1>Services</h1>
     </div>
 
-    <a href="{% url 'service_create' %}" class="primary-button">
-        + Serviciu
-    </a>
+    <div class="header-actions">
+        <a href="{% url 'category_create' %}" class="secondary-button">
+            + Categorie
+        </a>
+
+        <a href="{% url 'service_create' %}" class="primary-button">
+            + Serviciu
+        </a>
+    </div>
 </header>
 
-<section class="agenda-section">
 
-    {% for service in services %}
+{% for category in categories %}
 
-        <div class="service-row">
+    <section class="agenda-section category-section {% if not category.is_active %}category-inactive{% endif %}">
 
+        <div class="category-header">
             <div>
-                <strong>{{ service.name }}</strong>
+                <h2>{{ category.name }}</h2>
 
-                <span>
-                    {{ service.duration }} min
-                </span>
-            </div>
-
-            <div>
-                {% if service.price %}
-                    {{ service.price }} lei
-                {% else %}
-                    —
+                {% if category.description %}
+                    <p class="section-hint">{{ category.description }}</p>
                 {% endif %}
-            </div>
 
-            <div>
-                {% if service.is_active %}
-                    <span class="status status-confirmed">Activ</span>
-                {% else %}
-                    <span class="status">Inactiv</span>
+                {% if not category.is_active %}
+                    <span class="status">Categorie dezactivată</span>
                 {% endif %}
             </div>
 
             <div class="row-actions">
+                <a href="{% url 'service_create' %}?category={{ category.id }}">
+                    + Serviciu aici
+                </a>
 
-                <a href="{% url 'service_edit' service.id %}">
+                <a href="{% url 'category_edit' category.id %}">
                     Editează
                 </a>
 
                 <form
                     method="post"
-                    action="{% url 'service_delete' service.id %}"
-                    onsubmit="return confirm('Ștergi acest serviciu?');"
+                    action="{% url 'category_delete' category.id %}"
+                    onsubmit="return confirm('Ștergi categoria „{{ category.name|escapejs }}”?');"
                 >
                     {% csrf_token %}
-
-                    <button type="submit" class="delete-link">
-                        Șterge
-                    </button>
+                    <button type="submit" class="delete-link">Șterge</button>
                 </form>
-
             </div>
-
         </div>
 
-    {% empty %}
+        {% for service in category.services.all %}
+            {% include "dashboard/_service_row.html" %}
+        {% empty %}
+            <p class="empty-message">
+                Niciun serviciu în această categorie încă.
+            </p>
+        {% endfor %}
 
-        <p>Nu există servicii.</p>
+    </section>
 
-    {% endfor %}
+{% empty %}
 
-</section>
+    <section class="agenda-section">
+        <p>
+            Nu există categorii. Începe prin a adăuga una —
+            de exemplu „Profilaxie și igienizare”.
+        </p>
+    </section>
+
+{% endfor %}
+
+
+{% if uncategorized %}
+    <section class="agenda-section">
+        <div class="category-header">
+            <h2>Altele</h2>
+        </div>
+
+        <p class="section-hint">
+            Servicii fără categorie. Editează-le ca să le încadrezi.
+        </p>
+
+        {% for service in uncategorized %}
+            {% include "dashboard/_service_row.html" %}
+        {% endfor %}
+    </section>
+{% endif %}
 
 {% endblock %}

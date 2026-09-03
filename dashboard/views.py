@@ -2,9 +2,19 @@ from django.forms import modelformset_factory
 
 from bookings.appointment_utils import appointment_has_ended, update_past_appointments
 from bookings.booking_utils import get_schedule_blocks, slot_is_available
-from bookings.models import Appointment, Patient, ScheduleBlock, Service, WorkingHours
+from bookings.patient_matching import group_by_phone, rank_similar
+from bookings.service_catalog import suggest_services
+from bookings.models import (
+    Appointment,
+    Patient,
+    ScheduleBlock,
+    Service,
+    ServiceCategory,
+    WorkingHours,
+)
 from bookings.patient_utils import (
     get_or_create_patient,
+    merge_patients,
     normalize_phone,
     split_phone_initial,
 )
@@ -19,6 +29,7 @@ from .forms import (
     ManualAppointmentForm,
     PatientEditForm,
     ScheduleBlockForm,
+    ServiceCategoryForm,
     ServiceForm,
     WorkingHoursForm,
 )
@@ -26,7 +37,7 @@ from datetime import datetime, time, timedelta
 
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
-from django.db.models import Q
+from django.db.models import Prefetch, Q
 from django.http import HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -544,11 +555,57 @@ def appointment_delete(request, appointment_id):
 
 @staff_member_required(login_url="dashboard_login")
 def services(request):
-    services = Service.objects.order_by("name")
+    categories = (
+        ServiceCategory.objects
+        .prefetch_related(
+            Prefetch(
+                "services",
+                queryset=Service.objects.order_by("order", "name"),
+            )
+        )
+    )
+
+    # Serviciile fără categorie nu se pierd — apar la final, sub „Altele”.
+    uncategorized = Service.objects.filter(
+        category__isnull=True
+    ).order_by("order", "name")
 
     return render(request, "dashboard/services.html", {
-        "services": services,
+        "categories": categories,
+        "uncategorized": uncategorized,
     })
+
+
+@staff_member_required(login_url="dashboard_login")
+def service_suggest(request):
+    """
+    Sugestii pentru numele unui serviciu, din catalogul de referință.
+
+    Catalogul lucrează cu slug-uri de categorie; aici le traducem în
+    categoriile reale din baza de date. Dacă medicul a șters o categorie,
+    sugestia rămâne validă, doar că vine fără categorie completată.
+    """
+    suggestions = suggest_services(request.GET.get("q", ""))
+
+    slugs = {item["category_slug"] for item in suggestions}
+    categories = {
+        category.slug: category
+        for category in ServiceCategory.objects.filter(slug__in=slugs)
+    }
+
+    results = []
+
+    for item in suggestions:
+        category = categories.get(item["category_slug"])
+
+        results.append({
+            "name": item["name"],
+            "duration": item["duration"],
+            "category_id": category.id if category else "",
+            "category_name": category.name if category else "",
+        })
+
+    return JsonResponse({"services": results})
 
 @staff_member_required(login_url="dashboard_login")
 def service_create(request):
@@ -560,7 +617,15 @@ def service_create(request):
             messages.success(request, "Serviciul a fost adăugat.")
             return redirect("dashboard_services")
     else:
-        form = ServiceForm()
+        # „+ Serviciu” din interiorul unei categorii trimite ?category=<id>,
+        # ca medicul să nu o mai aleagă din listă.
+        initial = {}
+        category_id = request.GET.get("category")
+
+        if category_id and ServiceCategory.objects.filter(id=category_id).exists():
+            initial["category"] = category_id
+
+        form = ServiceForm(initial=initial)
 
     return render(request, "dashboard/service_form.html", {
         "form": form,
@@ -587,6 +652,67 @@ def service_edit(request, service_id):
         "title": "Editează serviciul",
         "service": service,
     })
+
+@staff_member_required(login_url="dashboard_login")
+def category_create(request):
+    if request.method == "POST":
+        form = ServiceCategoryForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Categoria a fost adăugată.")
+            return redirect("dashboard_services")
+    else:
+        form = ServiceCategoryForm()
+
+    return render(request, "dashboard/category_form.html", {
+        "form": form,
+        "title": "Categorie nouă",
+    })
+
+
+@staff_member_required(login_url="dashboard_login")
+def category_edit(request, category_id):
+    category = get_object_or_404(ServiceCategory, id=category_id)
+
+    if request.method == "POST":
+        form = ServiceCategoryForm(request.POST, instance=category)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Categoria a fost actualizată.")
+            return redirect("dashboard_services")
+    else:
+        form = ServiceCategoryForm(instance=category)
+
+    return render(request, "dashboard/category_form.html", {
+        "form": form,
+        "title": "Editează categoria",
+        "category": category,
+    })
+
+
+@require_POST
+@staff_member_required(login_url="dashboard_login")
+def category_delete(request, category_id):
+    category = get_object_or_404(ServiceCategory, id=category_id)
+
+    # Același tipar ca la servicii: dacă are conținut, o dezactivăm în loc
+    # s-o ștergem. FK-ul e PROTECT, deci ștergerea ar arunca oricum.
+    if category.services.exists():
+        category.is_active = False
+        category.save(update_fields=["is_active"])
+
+        messages.warning(
+            request,
+            "Categoria are servicii asociate și nu poate fi ștearsă. "
+            "A fost dezactivată.",
+        )
+    else:
+        category.delete()
+        messages.success(request, "Categoria a fost ștearsă.")
+
+    return redirect("dashboard_services")
 
 @require_POST
 @staff_member_required(login_url="dashboard_login")
@@ -660,14 +786,21 @@ def patients(request):
     patients_query = Patient.objects.all()
 
     if query:
-        patients_query = patients_query.filter(
-            Q(name__icontains=query) |
-            Q(phone__icontains=query) |
-            Q(email__icontains=query)
+        # Căutarea prinde un membru al familiei; grupul se completează
+        # apoi cu toți cei de pe același număr, ca să vezi familia întreagă.
+        matching_phones = (
+            patients_query.filter(
+                Q(name__icontains=query) |
+                Q(phone__icontains=query) |
+                Q(email__icontains=query)
+            )
+            .values_list("phone", flat=True)
         )
 
+        patients_query = patients_query.filter(phone__in=list(matching_phones))
+
     return render(request, "dashboard/patients.html", {
-        "patients": patients_query,
+        "groups": group_by_phone(list(patients_query)),
         "query": query,
     })
 
@@ -692,11 +825,53 @@ def patient_detail(request, patient_id):
         .order_by("-date", "-time")
     )
 
+    # Ceilalți de pe același număr — familia. Îi ordonăm după cât seamănă
+    # cu fișa curentă: cei de sus sunt probabil aceeași persoană scrisă
+    # greșit, cei de jos sunt rude reale. Medicul se uită și decide.
+    relatives = (
+        Patient.objects
+        .filter(phone=patient.phone)
+        .exclude(id=patient.id)
+    )
+
     return render(request, "dashboard/patient_detail.html", {
         "patient": patient,
         "form": form,
         "history": history,
+        "family": rank_similar(patient, relatives),
     })
+
+@require_POST
+@staff_member_required(login_url="dashboard_login")
+def patient_merge(request, patient_id):
+    """
+    Contopește fișa aleasă în fișa curentă.
+
+    `patient_id` e fișa care rămâne; `source_id` din POST e cea care se
+    duce în ea și dispare. Contopirea nu se poate desface, deci acceptăm
+    doar fișe de pe același număr de telefon — restul e prea riscant
+    pentru a fi făcut cu un singur click.
+    """
+    target = get_object_or_404(Patient, id=patient_id)
+    source = get_object_or_404(
+        Patient,
+        id=request.POST.get("source_id"),
+        phone=target.phone,
+    )
+
+    if source.pk == target.pk:
+        messages.error(request, "Nu poți contopi o fișă cu ea însăși.")
+        return redirect("patient_detail", patient_id=target.id)
+
+    source_name = source.name
+    merge_patients(source, target)
+
+    messages.success(
+        request,
+        f"Fișa „{source_name}” a fost mutată în „{target.name}”.",
+    )
+
+    return redirect("patient_detail", patient_id=target.id)
 
 @require_POST
 @staff_member_required(login_url="dashboard_login")

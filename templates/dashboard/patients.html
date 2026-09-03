@@ -24,22 +24,66 @@
         <button class="primary-button">Caută</button>
     </form>
 
-    {% for patient in patients %}
+        {% for group in groups %}
 
-        <a href="{% url 'patient_detail' patient.id %}" class="patient-row">
-            <div>
-                <strong>{{ patient.name }}</strong>
-                <span>{{ patient.phone }}</span>
+        {% if group.is_family %}
+
+            <div class="family-group">
+
+                <div class="family-header">
+                    <strong>{{ group.label }}</strong>
+
+                    <span class="family-phone">{{ group.phone }}</span>
+
+                    <span class="family-count">
+                        {{ group.members|length }} persoane
+                    </span>
+                </div>
+
+                {% for patient in group.members %}
+                    <a
+                        href="{% url 'patient_detail' patient.id %}"
+                        class="patient-row"
+                    >
+                        <div>
+                            <strong>{{ patient.name }}</strong>
+                        </div>
+
+                        <span>
+                            {% if patient.email %}
+                                {{ patient.email }}
+                            {% else %}
+                                —
+                            {% endif %}
+                        </span>
+                    </a>
+                {% endfor %}
+
             </div>
 
-            <span>
-                {% if patient.email %}
-                    {{ patient.email }}
-                {% else %}
-                    —
-                {% endif %}
-            </span>
-        </a>
+        {% else %}
+
+            {% with patient=group.members.0 %}
+                <a
+                    href="{% url 'patient_detail' patient.id %}"
+                    class="patient-row patient-row-single"
+                >
+                    <div>
+                        <strong>{{ patient.name }}</strong>
+                        <span class="family-phone">{{ patient.phone }}</span>
+                    </div>
+
+                    <span>
+                        {% if patient.email %}
+                            {{ patient.email }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </span>
+                </a>
+            {% endwith %}
+
+        {% endif %}
 
     {% empty %}
         <p>Nu există pacienți.</p>

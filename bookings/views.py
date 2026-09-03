@@ -38,7 +38,7 @@ def parse_time(value):
 
 
 def booking(request):
-    services = Service.objects.filter(is_active=True)
+    services = Service.objects.filter(is_active=True).select_related("category")
     selected_service = None
     slots = []
 
@@ -107,6 +107,10 @@ def create_appointment(request):
     booking_error = validate_booking(date, selected_time, service)
 
     if form.is_valid() and not booking_error:
+        # Fișa se alege singură: același nume (indiferent de ordine sau
+        # majuscule) pe același telefon = aceeași persoană. Orice altceva
+        # primește fișă nouă. Pacientul nu e întrebat nimic — nu are voie
+        # să afle numele altor pacienți.
         patient = get_or_create_patient(
             form.cleaned_data["patient_name"],
             form.cleaned_data["patient_phone"],
