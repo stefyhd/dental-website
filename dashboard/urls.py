@@ -55,4 +55,31 @@ urlpatterns = [
         views.service_delete,
         name="service_delete",
     ),
+    path(
+        "patients/search/",
+        views.patient_search,
+        name="patient_search",
+    ),
+    path("patients/", views.patients, name="dashboard_patients"),
+    path("patients/<int:patient_id>/", views.patient_detail, name="patient_detail"),
+    path(
+        "refresh-statuses/",
+        views.refresh_statuses,
+        name="refresh_statuses",
+    ),
+    path(
+        "appointments/<int:appointment_id>/status/",
+        views.appointment_status,
+        name="appointment_status",
+    ),
+    path(
+        "manual/day-data/",
+        views.manual_day_data,
+        name="manual_day_data",
+    ),
+    path(
+        "schedule/block-times/",
+        views.schedule_block_times,
+        name="schedule_block_times",
+    ),
     ]

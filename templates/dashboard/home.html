@@ -23,64 +23,53 @@
     </div>
 
     <div class="pending-list">
-
         {% for appointment in pending %}
 
             <article class="pending-card">
                 <div>
-                    <strong>{{ appointment.patient_name }}</strong>
+                    <strong>{{ appointment.patient.name }}</strong>
 
                     <p>
                         {{ appointment.service.name }}
-                        ·
-                        {{ appointment.date|date:"d.m.Y" }}
-                        ·
-                        {{ appointment.time|time:"H:i" }}
+                        · {{ appointment.date|date:"d.m.Y" }}
+                        · {{ appointment.time|time:"H:i" }}
                     </p>
                 </div>
 
                 <div class="pending-actions">
-
-                    <form method="post"
-                          action="{% url 'confirm_appointment' appointment.id %}">
-
+                    <form method="post" action="{% url 'confirm_appointment' appointment.id %}">
                         {% csrf_token %}
 
-                        <input type="hidden"
-                               name="return_date"
-                               value="{{ selected_date|date:'Y-m-d' }}">
+                        <input
+                            type="hidden"
+                            name="return_date"
+                            value="{{ selected_date|date:'Y-m-d' }}"
+                        >
 
                         <button class="confirm-button">
                             Confirmă
                         </button>
                     </form>
 
-
-                    <form method="post"
-                          action="{% url 'reject_appointment' appointment.id %}">
-
+                    <form method="post" action="{% url 'reject_appointment' appointment.id %}">
                         {% csrf_token %}
 
-                        <input type="hidden"
-                               name="return_date"
-                               value="{{ selected_date|date:'Y-m-d' }}">
+                        <input
+                            type="hidden"
+                            name="return_date"
+                            value="{{ selected_date|date:'Y-m-d' }}"
+                        >
 
                         <button class="reject-button">
                             Respinge
                         </button>
                     </form>
-
                 </div>
             </article>
 
         {% empty %}
-
-            <p class="empty-message">
-                Nu există programări în așteptare.
-            </p>
-
+            <p>Nu există programări în așteptare.</p>
         {% endfor %}
-
     </div>
 </section>
 
@@ -88,29 +77,16 @@
 <section class="agenda-section">
 
     <div class="agenda-header">
-
         <div>
             <p class="eyebrow">Agenda</p>
             <h2>{{ selected_date|date:"l, d F Y" }}</h2>
         </div>
 
-
         <div class="date-navigation">
-
-            <a href="?date={{ previous_date|date:'Y-m-d' }}">
-                ←
-            </a>
-
-            <a href="{% url 'dashboard_home' %}">
-                Azi
-            </a>
-
-            <a href="?date={{ next_date|date:'Y-m-d' }}">
-                →
-            </a>
-
+            <a href="?date={{ previous_date|date:'Y-m-d' }}">←</a>
+            <a href="{% url 'dashboard_home' %}">Azi</a>
+            <a href="?date={{ next_date|date:'Y-m-d' }}">→</a>
         </div>
-
     </div>
 
 
@@ -121,58 +97,136 @@
             <div class="agenda-row">
 
                 <div class="agenda-time">
-                    {{ row.time|time:"H:i" }}
+                    <a
+                        href="{% url 'manual_appointment' %}?date={{ selected_date|date:'Y-m-d' }}&time={{ row.time|time:'H:i' }}"
+                        class="agenda-add"
+                        title="Adaugă programare"
+                    >
+                        +
+                    </a>
+
+                    <span>{{ row.time|time:"H:i" }}</span>
                 </div>
 
 
                 <div class="agenda-content">
-                    {% for block in row.blocks %}
+
+                    {% if row.kind == "block" %}
+
                         <div class="agenda-block">
                             <strong>INDISPONIBIL</strong>
 
                             <span>
-                                {% if block.reason %}
-                                    {{ block.reason }}
-                                {% else %}
-                                    Interval blocat
-                                {% endif %}
+                                {% for block in row.blocks %}
+                                    {{ block.reason|default:"Interval blocat" }}
+                                    {% if not forloop.last %} · {% endif %}
+                                {% endfor %}
                             </span>
                         </div>
-                    {% endfor %}
 
-                    {% for item in row.appointments %}
 
-                        {% if item.starts_here %}
+                    {% elif row.kind == "appointment" %}
+
+                        {% if row.starts_here %}
 
                             <div class="agenda-appointment">
 
-                                <strong>
-                                    {{ item.appointment.patient_name }}
-                                </strong>
+                                <a
+                                    href="{% url 'appointment_edit' row.appointment.id %}"
+                                    class="agenda-appointment-main"
+                                >
+                                    <strong>
+                                        {{ row.appointment.patient.name }}
+                                    </strong>
 
-                                <span>
-                                    {{ item.appointment.service.name }}
-                                </span>
+                                    <div class="agenda-description">
+                                        <span>
+                                            {{ row.appointment.service.name }}
+                                        </span>
 
-                                <span class="status status-{{ item.appointment.status }}">
-                                    {{ item.appointment.get_status_display }}
-                                </span>
+                                        {% if row.appointment.notes %}
+                                            <span class="agenda-notes">
+                                                {{ row.appointment.notes }}
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </a>
+
+
+                                <div class="agenda-right">
+
+                                    <form
+                                        method="post"
+                                        action="{% url 'appointment_status' row.appointment.id %}"
+                                        class="status-form"
+                                    >
+                                        {% csrf_token %}
+
+                                        <input
+                                            type="hidden"
+                                            name="return_date"
+                                            value="{{ selected_date|date:'Y-m-d' }}"
+                                        >
+
+                                        <select
+                                            name="status"
+                                            class="status-select"
+                                            onchange="this.form.submit()"
+                                        >
+                                            {% for value, label in row.status_choices %}
+                                                <option
+                                                    value="{{ value }}"
+                                                    {% if row.appointment.status == value %}selected{% endif %}
+                                                >
+                                                    {{ label }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </form>
+
+
+                                    {% if row.has_ended %}
+                                        <a
+                                            href="{% url 'manual_appointment' %}?follow_up_of={{ row.appointment.id }}"
+                                            class="follow-up-button"
+                                        >
+                                            Reprogramează
+                                        </a>
+                                    {% else %}
+                                        <span class="agenda-action-placeholder"></span>
+                                    {% endif %}
+
+
+                                    <a
+                                        href="{% url 'appointment_delete' row.appointment.id %}?return_date={{ selected_date|date:'Y-m-d' }}"
+                                        class="agenda-delete"
+                                        title="Șterge programarea"
+                                    >
+                                        ×
+                                    </a>
+
+                                </div>
 
                             </div>
 
                         {% else %}
 
-                            <div class="agenda-continuation">
-                                ↳ {{ item.appointment.patient_name }}
-                            </div>
+                            <a
+                                href="{% url 'appointment_edit' row.appointment.id %}"
+                                class="agenda-continuation"
+                            >
+                                ↳ {{ row.appointment.patient.name }}
+                            </a>
 
                         {% endif %}
 
 
-                    {% endfor %}
+                    {% else %}
 
-                    {% if not row.appointments and not row.blocks %}
-                        <span class="agenda-free">-</span>
+                        <span class="agenda-free">
+                            -
+                        </span>
+
                     {% endif %}
 
                 </div>
@@ -184,5 +238,42 @@
     </div>
 
 </section>
+
+
+<script>
+function getCookie(name) {
+    const cookies = document.cookie.split(";");
+
+    for (const cookie of cookies) {
+        const value = cookie.trim();
+
+        if (value.startsWith(name + "=")) {
+            return decodeURIComponent(value.substring(name.length + 1));
+        }
+    }
+
+    return null;
+}
+
+setInterval(async () => {
+    const response = await fetch(
+        "{% url 'refresh_statuses' %}",
+        {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": getCookie("csrftoken"),
+            },
+        }
+    );
+
+    if (!response.ok) return;
+
+    const data = await response.json();
+
+    if (data.updated.length > 0) {
+        window.location.reload();
+    }
+}, 30000);
+</script>
 
 {% endblock %}

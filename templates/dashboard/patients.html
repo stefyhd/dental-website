@@ -1,0 +1,50 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Patients{% endblock %}
+
+{% block content %}
+
+<header class="dashboard-header">
+    <div>
+        <p class="eyebrow">Management</p>
+        <h1>Patients</h1>
+    </div>
+</header>
+
+<section class="agenda-section">
+
+    <form method="get" class="patient-list-search">
+        <input
+            type="search"
+            name="q"
+            value="{{ query }}"
+            placeholder="Caută după nume, telefon sau email..."
+        >
+
+        <button class="primary-button">Caută</button>
+    </form>
+
+    {% for patient in patients %}
+
+        <a href="{% url 'patient_detail' patient.id %}" class="patient-row">
+            <div>
+                <strong>{{ patient.name }}</strong>
+                <span>{{ patient.phone }}</span>
+            </div>
+
+            <span>
+                {% if patient.email %}
+                    {{ patient.email }}
+                {% else %}
+                    —
+                {% endif %}
+            </span>
+        </a>
+
+    {% empty %}
+        <p>Nu există pacienți.</p>
+    {% endfor %}
+
+</section>
+
+{% endblock %}

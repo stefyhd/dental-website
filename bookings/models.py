@@ -10,6 +10,18 @@ class Service(models.Model):
     def __str__(self):
         return self.name
 
+class Patient(models.Model):
+    name = models.CharField(max_length=120, db_index=True)
+    phone = models.CharField(max_length=30, unique=True)
+    email = models.EmailField(blank=True)
+    notes = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["name"]
+
+    def __str__(self):
+        return f"{self.name} - {self.phone}"
 
 class Appointment(models.Model):
     class Status(models.TextChoices):
@@ -20,9 +32,11 @@ class Appointment(models.Model):
         COMPLETED = "completed", "Finalizată"
         NO_SHOW = "no_show", "Neprezentat"
 
-    patient_name = models.CharField(max_length=120)
-    patient_phone = models.CharField(max_length=20)
-    patient_email = models.EmailField(blank=True)
+    patient = models.ForeignKey(
+        Patient,
+        on_delete=models.PROTECT,
+        related_name="appointments",
+    )
 
     service = models.ForeignKey(
         Service,
@@ -39,10 +53,20 @@ class Appointment(models.Model):
         default=Status.PENDING,
     )
 
+    notes = models.TextField(blank=True)
+
+    follow_up_of = models.ForeignKey(
+        "self",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="follow_ups",
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.patient_name} - {self.date} {self.time}"
+        return f"{self.patient.name} - {self.date} {self.time}"
 
 
 class WorkingHours(models.Model):

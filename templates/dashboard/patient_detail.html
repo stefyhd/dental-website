@@ -1,34 +1,41 @@
 {% extends "dashboard/base.html" %}
 
-{% block title %}Appointments{% endblock %}
+{% block title %}{{ patient.name }}{% endblock %}
 
 {% block content %}
 
 <header class="dashboard-header">
     <div>
-        <p class="eyebrow">Management</p>
-        <h1>Appointments</h1>
+        <p class="eyebrow">Patient File</p>
+        <h1>{{ patient.name }}</h1>
+        <p>{{ patient.phone }}</p>
     </div>
-
-    <a href="{% url 'manual_appointment' %}" class="primary-button">
-        + Programare
-    </a>
 </header>
 
-<section class="agenda-section">
+<section class="form-card">
+    <h2>Date pacient</h2>
 
-    {% for appointment in appointments %}
+    <form method="post">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit" class="primary-button">
+            Salvează
+        </button>
+    </form>
+</section>
+
+<section class="agenda-section">
+    <h2>Istoric programări</h2>
+
+    {% for appointment in history %}
 
         <div class="appointment-management-row">
 
             <div class="appointment-date">
                 <strong>{{ appointment.date|date:"d.m.Y" }}</strong>
                 <span>{{ appointment.time|time:"H:i" }}</span>
-            </div>
-
-            <div>
-                <strong>{{ appointment.patient.name }}</strong>
-                <span>{{ appointment.patient.phone }}</span>
             </div>
 
             <div>
@@ -42,26 +49,15 @@
             </div>
 
             <div class="row-actions">
-
                 <a href="{% url 'appointment_edit' appointment.id %}">
                     Editează
                 </a>
-
-                <a
-                    href="{% url 'appointment_delete' appointment.id %}"
-                    class="delete-link"
-                >
-                    Șterge
-                </a>
-
             </div>
 
         </div>
 
     {% empty %}
-
-        <p>Nu există programări.</p>
-
+        <p>Pacientul nu are programări.</p>
     {% endfor %}
 
 </section>

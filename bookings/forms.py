@@ -1,38 +1,39 @@
 from django import forms
-from .models import Appointment
+from phonenumber_field.formfields import SplitPhoneNumberField
+import phonenumbers
+
 from django import forms
-from bookings.models import Appointment, ScheduleBlock, Service, WorkingHours
+from phonenumber_field.formfields import SplitPhoneNumberField
 
 
-class AppointmentForm(forms.ModelForm):
-    class Meta:
-        model = Appointment
-        fields = ["patient_name", "patient_phone", "patient_email"]
-        widgets = {
-            "patient_name": forms.TextInput(attrs={"placeholder": "Nume și prenume"}),
-            "patient_phone": forms.TextInput(attrs={"placeholder": "Telefon"}),
-            "patient_email": forms.EmailInput(attrs={"placeholder": "Email opțional"}),
-        }
 
-class AppointmentEditForm(forms.ModelForm):
-    class Meta:
-        model = Appointment
-        fields = [
-            "patient_name",
-            "patient_phone",
-            "patient_email",
-            "service",
-            "date",
-            "time",
-            "status",
-        ]
-        widgets = {
-            "date": forms.DateInput(attrs={"type": "date"}),
-            "time": forms.TimeInput(attrs={"type": "time"}),
-        }
+class AppointmentForm(forms.Form):
+    patient_name = forms.CharField(
+        max_length=120,
+        label="Nume și prenume",
+        widget=forms.TextInput(attrs={"placeholder": "Nume și prenume"}),
+    )
 
+    patient_phone = SplitPhoneNumberField(
+        region="RO",
+        label="Telefon",
+    )
 
-class ServiceForm(forms.ModelForm):
-    class Meta:
-        model = Service
-        fields = ["name", "duration", "price", "is_active"]
+    patient_email = forms.EmailField(
+        required=False,
+        label="Email",
+        widget=forms.EmailInput(attrs={"placeholder": "Email opțional"}),
+    )
+
+    def clean_patient_phone(self):
+        phone = self.cleaned_data["patient_phone"]
+
+        try:
+            parsed = phonenumbers.parse(str(phone), None)
+        except phonenumbers.NumberParseException:
+            raise forms.ValidationError("Numărul de telefon nu este valid.")
+
+        if not phonenumbers.is_valid_number(parsed):
+            raise forms.ValidationError("Numărul de telefon nu este valid.")
+
+        return phone

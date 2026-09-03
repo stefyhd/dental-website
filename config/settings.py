@@ -24,6 +24,7 @@ SECRET_KEY = 'django-insecure-4f!h$tv13&!8*itg&t3g*)m&x45yxkt!g^uh&t-jby#%m%aq#a
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+PHONENUMBER_DEFAULT_REGION = "RO"
 
 ALLOWED_HOSTS = []
 
@@ -107,7 +108,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "Europe/Bucharest"
 
 USE_I18N = True
 

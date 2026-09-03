@@ -1,0 +1,7 @@
+asgiref==3.12.1
+babel==2.18.0
+Django==6.1
+django-phonenumber-field==8.5.0
+phonenumbers==9.0.38
+RapidFuzz==3.14.6
+sqlparse==0.6.0

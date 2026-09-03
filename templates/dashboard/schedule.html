@@ -108,4 +108,65 @@
     {% endfor %}
 </section>
 
+<script>
+const blockDate = document.getElementById("id_block-date");
+const blockStart = document.getElementById("id_block-start_time");
+const blockEnd = document.getElementById("id_block-end_time");
+const blockAllDay = document.getElementById("id_block-all_day");
+
+async function updateBlockTimes() {
+    if (!blockDate.value) {
+        return;
+    }
+
+    const response = await fetch(
+        `{% url 'schedule_block_times' %}?date=${encodeURIComponent(blockDate.value)}`
+    );
+
+    if (!response.ok) {
+        return;
+    }
+
+    const data = await response.json();
+
+    const oldStart = blockStart.value;
+    const oldEnd = blockEnd.value;
+
+    function fillSelect(select, oldValue) {
+        select.innerHTML = "";
+
+        const empty = document.createElement("option");
+        empty.value = "";
+        empty.textContent = "--:--";
+        select.appendChild(empty);
+
+        data.times.forEach(value => {
+            const option = document.createElement("option");
+            option.value = value;
+            option.textContent = value;
+            select.appendChild(option);
+        });
+
+        if (data.times.includes(oldValue)) {
+            select.value = oldValue;
+        }
+    }
+
+    fillSelect(blockStart, oldStart);
+    fillSelect(blockEnd, oldEnd);
+}
+
+function updateAllDayState() {
+    const disabled = blockAllDay.checked;
+
+    blockStart.disabled = disabled;
+    blockEnd.disabled = disabled;
+}
+
+blockDate.addEventListener("change", updateBlockTimes);
+blockAllDay.addEventListener("change", updateAllDayState);
+
+updateAllDayState();
+</script>
+
 {% endblock %}

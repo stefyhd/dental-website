@@ -11,18 +11,319 @@
     </div>
 </header>
 
-<div class="form-card">
 
-    <form method="post">
-        {% csrf_token %}
+<section class="manual-layout">
 
-        {{ form.as_p }}
+    <div class="form-card manual-form-card">
 
-        <button type="submit" class="primary-button">
-            Salvează programarea
-        </button>
-    </form>
+        <form method="post">
+            {% csrf_token %}
 
-</div>
+            {{ form.patient_id }}
+            {{ form.follow_up_of }}
+
+
+            <div class="form-field patient-search">
+                {{ form.patient_name.label_tag }}
+                {{ form.patient_name }}
+
+                <div
+                    id="patient-suggestions"
+                    class="patient-suggestions"
+                ></div>
+            </div>
+
+
+            <div class="form-field">
+                {{ form.patient_phone.label_tag }}
+                {{ form.patient_phone }}
+                {{ form.patient_phone.errors }}
+            </div>
+
+
+            <div class="form-field">
+                {{ form.patient_email.label_tag }}
+                {{ form.patient_email }}
+            </div>
+
+
+            <div class="form-field">
+                {{ form.service.label_tag }}
+                {{ form.service }}
+            </div>
+
+
+            <div class="manual-date-time">
+                <div class="form-field">
+                    {{ form.date.label_tag }}
+                    {{ form.date }}
+                </div>
+
+                <div class="form-field">
+                    {{ form.time.label_tag }}
+                    {{ form.time }}
+                </div>
+            </div>
+
+
+            <div class="form-field">
+                {{ form.notes.label_tag }}
+                {{ form.notes }}
+            </div>
+
+
+            {% if form.non_field_errors %}
+                <div class="form-errors">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+
+            <button type="submit" class="primary-button">
+                Salvează programarea
+            </button>
+        </form>
+
+    </div>
+
+
+    <aside class="agenda-section manual-agenda-card">
+
+        <div class="agenda-header">
+            <div>
+                <p class="eyebrow">Agenda</p>
+                <h2 id="manual-agenda-date"></h2>
+            </div>
+        </div>
+
+        <div id="manual-agenda" class="manual-agenda"></div>
+
+    </aside>
+
+</section>
+
+
+<script>
+const nameInput = document.getElementById("id_patient_name");
+const patientIdInput = document.getElementById("id_patient_id");
+const emailInput = document.getElementById("id_patient_email");
+const countryInput = document.getElementById("id_patient_phone_0");
+const phoneInput = document.getElementById("id_patient_phone_1");
+
+const dateInput = document.getElementById("id_date");
+const timeInput = document.getElementById("id_time");
+
+const suggestions = document.getElementById("patient-suggestions");
+const agendaContainer = document.getElementById("manual-agenda");
+const agendaDate = document.getElementById("manual-agenda-date");
+
+let searchTimeout;
+
+
+/* PATIENT SEARCH */
+
+nameInput.addEventListener("input", () => {
+    patientIdInput.value = "";
+    clearTimeout(searchTimeout);
+
+    const query = nameInput.value.trim();
+
+    if (query.length < 2) {
+        suggestions.innerHTML = "";
+        return;
+    }
+
+    searchTimeout = setTimeout(async () => {
+        const response = await fetch(
+            `{% url 'patient_search' %}?q=${encodeURIComponent(query)}`
+        );
+
+        if (!response.ok) return;
+
+        const data = await response.json();
+
+        suggestions.innerHTML = "";
+
+        data.patients.forEach(patient => {
+            const item = document.createElement("button");
+
+            item.type = "button";
+            item.className = "patient-suggestion";
+
+            const name = document.createElement("strong");
+            name.textContent = patient.name;
+
+            const details = document.createElement("span");
+            details.textContent =
+                patient.phone +
+                (patient.email ? " · " + patient.email : "");
+
+            item.append(name, details);
+
+            item.addEventListener("click", () => {
+                patientIdInput.value = patient.id;
+                nameInput.value = patient.name;
+                emailInput.value = patient.email;
+                countryInput.value = patient.country;
+                phoneInput.value = patient.national_number;
+
+                suggestions.innerHTML = "";
+            });
+
+            suggestions.appendChild(item);
+        });
+
+    }, 180);
+});
+
+
+phoneInput.addEventListener("input", () => {
+    patientIdInput.value = "";
+});
+
+countryInput.addEventListener("change", () => {
+    patientIdInput.value = "";
+});
+
+document.addEventListener("click", event => {
+    if (!event.target.closest(".patient-search")) {
+        suggestions.innerHTML = "";
+    }
+});
+
+
+/* LIVE AGENDA */
+
+async function loadManualAgenda(keepSelectedTime = true) {
+    const selectedDate = dateInput.value;
+
+    if (!selectedDate) return;
+
+    const previousTime = keepSelectedTime
+        ? timeInput.value
+        : "";
+
+    const response = await fetch(
+        `{% url 'manual_day_data' %}?date=${encodeURIComponent(selectedDate)}`
+    );
+
+    if (!response.ok) return;
+
+    const data = await response.json();
+
+
+    /* UPDATE TIME DROPDOWN */
+
+    timeInput.innerHTML = "";
+
+    const emptyOption = document.createElement("option");
+    emptyOption.value = "";
+    emptyOption.textContent = "Alege ora";
+
+    timeInput.appendChild(emptyOption);
+
+    data.times.forEach(value => {
+        const option = document.createElement("option");
+
+        option.value = value;
+        option.textContent = value;
+
+        timeInput.appendChild(option);
+    });
+
+    if (data.times.includes(previousTime)) {
+        timeInput.value = previousTime;
+    }
+
+
+    /* DATE HEADER */
+
+    const dateObject = new Date(data.date + "T12:00:00");
+
+    agendaDate.textContent = new Intl.DateTimeFormat(
+        "ro-RO",
+        {
+            weekday: "long",
+            day: "numeric",
+            month: "long",
+        }
+    ).format(dateObject);
+
+
+    /* AGENDA */
+
+    agendaContainer.innerHTML = "";
+
+    data.agenda.forEach(row => {
+        const wrapper = document.createElement("div");
+        wrapper.className = "manual-agenda-row";
+
+        const timeCell = document.createElement("div");
+        timeCell.className = "manual-agenda-time";
+
+        const addButton = document.createElement("button");
+        addButton.type = "button";
+        addButton.className = "agenda-add";
+        addButton.textContent = "+";
+
+        addButton.addEventListener("click", () => {
+            timeInput.value = row.time;
+        });
+
+        const timeText = document.createElement("span");
+        timeText.textContent = row.time;
+
+        timeCell.append(addButton, timeText);
+
+
+        const content = document.createElement("div");
+        content.className = "manual-agenda-content";
+
+
+        if (row.kind === "appointment") {
+            const name = document.createElement("strong");
+
+            name.textContent = row.starts_here
+                ? row.name
+                : "↳ " + row.name;
+
+            const details = document.createElement("span");
+            details.textContent =
+                row.service +
+                (row.notes ? " · " + row.notes : "");
+
+            content.append(name, details);
+        }
+
+        else if (row.kind === "block") {
+            content.classList.add("manual-agenda-block");
+
+            const title = document.createElement("strong");
+            title.textContent = "INDISPONIBIL";
+
+            const reason = document.createElement("span");
+            reason.textContent = row.reasons.join(" · ");
+
+            content.append(title, reason);
+        }
+
+        else {
+            content.textContent = "-";
+        }
+
+
+        wrapper.append(timeCell, content);
+        agendaContainer.appendChild(wrapper);
+    });
+}
+
+
+dateInput.addEventListener("change", () => {
+    loadManualAgenda(false);
+});
+
+
+loadManualAgenda(true);
+</script>
 
 {% endblock %}

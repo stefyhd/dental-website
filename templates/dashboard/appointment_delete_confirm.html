@@ -1,0 +1,85 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Șterge programarea{% endblock %}
+
+{% block content %}
+
+<header class="dashboard-header">
+    <div>
+        <p class="eyebrow">Appointments</p>
+        <h1>Șterge programarea</h1>
+    </div>
+</header>
+
+<section class="form-card delete-confirm-card">
+
+    <div class="delete-warning">
+        <strong>Atenție</strong>
+
+        <p>
+            Urmează să ștergi definitiv programarea:
+        </p>
+
+        <p>
+            <strong>{{ appointment.patient.name }}</strong><br>
+            {{ appointment.service.name }} ·
+            {{ appointment.date|date:"d.m.Y" }} ·
+            {{ appointment.time|time:"H:i" }}
+        </p>
+
+        <p>
+            Acțiunea nu poate fi anulată.
+        </p>
+    </div>
+
+
+    <form method="post">
+        {% csrf_token %}
+
+        <input
+            type="hidden"
+            name="return_date"
+            value="{{ return_date|default:'' }}"
+        >
+
+        <div class="form-field">
+            <label for="password">
+                Confirmă parola contului
+            </label>
+
+            <input
+                type="password"
+                id="password"
+                name="password"
+                autocomplete="current-password"
+                required
+            >
+        </div>
+
+        {% if error %}
+            <p class="delete-error">
+                {{ error }}
+            </p>
+        {% endif %}
+
+        <div class="delete-confirm-actions">
+            <button type="submit" class="danger-button">
+                Șterge definitiv
+            </button>
+
+            {% if return_date %}
+                <a href="{% url 'dashboard_home' %}?date={{ return_date }}">
+                    Renunță
+                </a>
+            {% else %}
+                <a href="{% url 'dashboard_appointments' %}">
+                    Renunță
+                </a>
+            {% endif %}
+        </div>
+
+    </form>
+
+</section>
+
+{% endblock %}

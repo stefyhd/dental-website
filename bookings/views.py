@@ -4,9 +4,14 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
 from .forms import AppointmentForm
-from .models import Appointment, Service
 from .models import Appointment, ScheduleBlock, Service, WorkingHours
 from django.db.models import Q
+from .patient_utils import get_or_create_patient
+from bookings.appointment_utils import (
+    appointment_has_ended,
+    update_past_appointments,
+)
+
 
 
 SLOT_MINUTES = 30
@@ -22,7 +27,9 @@ def get_schedule_blocks(date):
 
 def generate_slots(date, service):
     try:
-        working_hours = WorkingHours.objects.get(weekday=date.weekday())
+        working_hours = WorkingHours.objects.get(
+            weekday=date.weekday()
+        )
     except WorkingHours.DoesNotExist:
         return []
 
@@ -31,13 +38,22 @@ def generate_slots(date, service):
 
     slots = []
 
-    current = datetime.combine(date, working_hours.opening_time)
-    closing = datetime.combine(date, working_hours.closing_time)
+    current = datetime.combine(
+        date,
+        working_hours.opening_time
+    )
+
+    closing = datetime.combine(
+        date,
+        working_hours.closing_time
+    )
+
+    now = timezone.localtime()
 
     while current + timedelta(minutes=service.duration) <= closing:
         slot_time = current.time()
 
-        if date == timezone.localdate() and slot_time <= timezone.localtime().time():
+        if date == now.date() and slot_time <= now.time():
             current += timedelta(minutes=SLOT_MINUTES)
             continue
 
@@ -150,16 +166,28 @@ def create_appointment(request):
 
     form = AppointmentForm(request.POST)
 
-    if form.is_valid() and slot_is_available(date, selected_time, service.duration):
-        appointment = form.save(commit=False)
-        appointment.service = service
-        appointment.date = date
-        appointment.time = selected_time
-        appointment.status = Appointment.Status.PENDING
-        appointment.save()
+    if form.is_valid() and slot_is_available(
+        date,
+        selected_time,
+        service.duration,
+    ):
+        patient = get_or_create_patient(
+            form.cleaned_data["patient_name"],
+            form.cleaned_data["patient_phone"],
+            form.cleaned_data["patient_email"],
+        )
+
+        Appointment.objects.create(
+            patient=patient,
+            service=service,
+            date=date,
+            time=selected_time,
+            status=Appointment.Status.PENDING,
+        )
 
         return redirect("booking_success")
 
+        
     return render(request, "bookings/booking_form.html", {
         "form": form,
         "service": service,
