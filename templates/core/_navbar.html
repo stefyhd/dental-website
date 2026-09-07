@@ -1,0 +1,41 @@
+{% comment %}
+Navbarul are DOUĂ stări, nu două bare: transparent peste hero, iar la
+scroll se condensează în pilulă albă. Dacă ar apărea doar la scroll,
+cineva care aterizează și vrea „Contact" n-ar ști că există navigație.
+
+Linkurile duc la ancore din pagina home până când există pagini separate —
+un link către o pagină inexistentă e mai rău decât o ancoră.
+{% endcomment %}
+
+<header class="navbar">
+    <div class="container">
+        <div class="navbar-inner">
+
+            <a class="navbar-logo" href="{% url 'home' %}">
+                {# Când ai logoul: <img src="{% static 'img/logo.svg' %}" alt=""> #}
+                {{ clinic.name }}
+            </a>
+
+            <button
+                class="navbar-toggle"
+                type="button"
+                aria-expanded="false"
+                aria-controls="navbar-links"
+                aria-label="Deschide meniul"
+            >
+                <span></span>
+            </button>
+
+            <nav class="navbar-links" id="navbar-links" aria-label="Navigare principală">
+                <a href="{% url 'home' %}#servicii">Servicii &amp; Prețuri</a>
+                <a href="{% url 'home' %}#despre">Despre</a>
+                <a href="{% url 'home' %}#contact">Contact</a>
+
+                <a class="btn btn-primary navbar-cta" href="{% url 'booking' %}">
+                    Programează-te
+                </a>
+            </nav>
+
+        </div>
+    </div>
+</header>

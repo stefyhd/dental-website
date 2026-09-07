@@ -1,0 +1,38 @@
+<footer class="footer">
+    <div class="container">
+
+        <div class="footer-grid">
+
+            <div>
+                <p class="footer-brand">{{ clinic.name }}</p>
+                <p>{{ clinic.tagline }}</p>
+            </div>
+
+            <div>
+                <h4>Contact</h4>
+                <ul>
+                    <li><a href="tel:{{ clinic.phone_raw }}">{{ clinic.phone_display }}</a></li>
+                    <li><a href="mailto:{{ clinic.email }}">{{ clinic.email }}</a></li>
+                    <li>{{ clinic.address }}</li>
+                </ul>
+            </div>
+
+            <div>
+                <h4>Pagini</h4>
+                <ul>
+                    <li><a href="{% url 'home' %}#servicii">Servicii &amp; Prețuri</a></li>
+                    <li><a href="{% url 'home' %}#despre">Despre medic</a></li>
+                    <li><a href="{% url 'home' %}#contact">Contact</a></li>
+                    <li><a href="{% url 'booking' %}">Programează-te</a></li>
+                </ul>
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            <span>&copy; {% now "Y" %} {{ clinic.name }}</span>
+            <span>Politica de confidențialitate · Termeni</span>
+        </div>
+
+    </div>
+</footer>

@@ -5,23 +5,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>{% block title %}Cabinet Stomatologic{% endblock %}</title>
+
+    <meta name="description" content="{% block description %}Cabinet stomatologic — tratamente într-un mediu calm, cu atenție pentru confortul fiecărui pacient.{% endblock %}">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet"
+    >
+
+    <link rel="stylesheet" href="{% static 'css/tokens.css' %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    {% block head_extra %}{% endblock %}
 </head>
 <body>
 
-<header>
-    <nav>
-        <a href="/">Acasă</a>
-        <a href="/programari/">Programări</a>
-        <a href="/contact/">Contact</a>
-    </nav>
-</header>
+<a class="skip-link" href="#main">Sari la conținut</a>
 
-<main>
-    {% block content %}
-    {% endblock %}
+{% include "core/_topbar.html" %}
+
+<span class="nav-sentinel" aria-hidden="true"></span>
+
+{% include "core/_navbar.html" %}
+
+<main id="main">
+    {% block content %}{% endblock %}
 </main>
+
+{% include "core/_footer.html" %}
+
+<script>
+/* Navbarul are două stări. Nu ascultăm evenimentul de scroll — ar rula
+   de zeci de ori pe secundă. Punem un observator pe santinela de 1px de
+   sus: cât timp e vizibilă suntem în capul paginii, când iese, bara
+   devine pilulă flotantă. */
+(function () {
+    const navbar = document.querySelector(".navbar");
+    const sentinel = document.querySelector(".nav-sentinel");
+
+    if (navbar && sentinel && "IntersectionObserver" in window) {
+        new IntersectionObserver(
+            ([entry]) => navbar.classList.toggle("is-stuck", !entry.isIntersecting)
+        ).observe(sentinel);
+    }
+
+    /* Meniul de pe telefon */
+    const toggle = document.querySelector(".navbar-toggle");
+    const links = document.getElementById("navbar-links");
+
+    if (!toggle || !links) return;
+
+    const isMobile = () => window.matchMedia("(max-width: 768px)").matches;
+
+    const setOpen = (open) => {
+        toggle.setAttribute("aria-expanded", String(open));
+        links.hidden = !open;
+    };
+
+    /* Pe desktop meniul e mereu vizibil; hidden se aplică doar pe mobil. */
+    const sync = () => setOpen(!isMobile() ? true : false);
+
+    sync();
+    window.addEventListener("resize", sync);
+
+    toggle.addEventListener("click", () => {
+        setOpen(toggle.getAttribute("aria-expanded") !== "true");
+    });
+
+    links.addEventListener("click", (event) => {
+        if (event.target.tagName === "A" && isMobile()) setOpen(false);
+    });
+})();
+</script>
+
+{% block scripts %}{% endblock %}
 
 </body>
 </html>
