@@ -6,16 +6,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>{% block title %}Cabinet Stomatologic{% endblock %}</title>
-
-    <meta name="description" content="{% block description %}Cabinet stomatologic — tratamente într-un mediu calm, cu atenție pentru confortul fiecărui pacient.{% endblock %}">
+    <title>{% block title %}{{ clinic.name }}{% endblock %}</title>
+    <meta name="description" content="{% block description %}Cabinet stomatologic cu un singur medic în {{ clinic.city }}. Consultație fără grabă, plan de tratament scris și preț spus înainte.{% endblock %}">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap"
-        rel="stylesheet"
-    >
+    <link href="https://fonts.googleapis.com/css2?family=Petrona:wght@400;500;600&family=Karla:wght@400;500;700&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="{% static 'css/tokens.css' %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
@@ -26,9 +22,9 @@
 
 <a class="skip-link" href="#main">Sari la conținut</a>
 
-{% include "core/_topbar.html" %}
+{% include "core/_urgency.html" %}
 
-<span class="nav-sentinel" aria-hidden="true"></span>
+<span class="nav-probe" aria-hidden="true"></span>
 
 {% include "core/_navbar.html" %}
 
@@ -39,46 +35,30 @@
 {% include "core/_footer.html" %}
 
 <script>
-/* Navbarul are două stări. Nu ascultăm evenimentul de scroll — ar rula
-   de zeci de ori pe secundă. Punem un observator pe santinela de 1px de
-   sus: cât timp e vizibilă suntem în capul paginii, când iese, bara
-   devine pilulă flotantă. */
+/* Navbarul are două stări. Nu ascultăm scroll — ar rula de zeci de ori pe
+   secundă. Observăm o santinelă de 1px din capul paginii. */
 (function () {
-    const navbar = document.querySelector(".navbar");
-    const sentinel = document.querySelector(".nav-sentinel");
+    const nav = document.querySelector(".topnav");
+    const probe = document.querySelector(".nav-probe");
 
-    if (navbar && sentinel && "IntersectionObserver" in window) {
+    if (nav && probe && "IntersectionObserver" in window) {
         new IntersectionObserver(
-            ([entry]) => navbar.classList.toggle("is-stuck", !entry.isIntersecting)
-        ).observe(sentinel);
+            ([e]) => nav.classList.toggle("pinned", !e.isIntersecting)
+        ).observe(probe);
     }
 
-    /* Meniul de pe telefon */
-    const toggle = document.querySelector(".navbar-toggle");
-    const links = document.getElementById("navbar-links");
+    const burger = document.querySelector(".burger");
+    const links = document.getElementById("navlinks");
+    if (!burger || !links) return;
 
-    if (!toggle || !links) return;
-
-    const isMobile = () => window.matchMedia("(max-width: 768px)").matches;
-
-    const setOpen = (open) => {
-        toggle.setAttribute("aria-expanded", String(open));
-        links.hidden = !open;
-    };
-
-    /* Pe desktop meniul e mereu vizibil; hidden se aplică doar pe mobil. */
-    const sync = () => setOpen(!isMobile() ? true : false);
+    const small = () => window.matchMedia("(max-width: 768px)").matches;
+    const open = (v) => { burger.setAttribute("aria-expanded", String(v)); links.hidden = !v; };
+    const sync = () => open(!small());
 
     sync();
     window.addEventListener("resize", sync);
-
-    toggle.addEventListener("click", () => {
-        setOpen(toggle.getAttribute("aria-expanded") !== "true");
-    });
-
-    links.addEventListener("click", (event) => {
-        if (event.target.tagName === "A" && isMobile()) setOpen(false);
-    });
+    burger.addEventListener("click", () => open(burger.getAttribute("aria-expanded") !== "true"));
+    links.addEventListener("click", (e) => { if (e.target.tagName === "A" && small()) open(false); });
 })();
 </script>
 

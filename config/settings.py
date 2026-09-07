@@ -133,17 +133,25 @@ DEFAULT_FROM_EMAIL = "Cabinet Stomatologic <noreply@example.ro>"
 
 CLINIC = {
     "name": "Dr. Hodoș Grațiella-Elena",
-    "tagline": "Stomatologie într-un mediu calm și prietenos.",
+    "tagline": "Cabinet cu un singur medic. Același, de fiecare dată.",
     "doctor_name": "Dr. Hodoș Grațiella-Elena",
     "doctor_role": "Medic stomatolog",
 
-    "phone_display": "0752 139 878",
-    "phone_raw": "+40752139878",
-    "email": "grati.hodos@example.ro",
-    "address": "Strada Mircea cel Mare 12, Curtea de Argeș",
+    "city": "Sighișoara",
+    "city_gen": "Sighișoarei",
+    "landmark": "Turnul cu Ceas",
+
+    "phone_display": "0771 219 234",
+    "phone_raw": "+40771219234",
+    "email": "contact@example.ro",
+    "address": "Strada Exemplu 12, Sighișoara",
+
+    "parking": "Parcare pe stradă, în fața cabinetului. De obicei sunt locuri dimineața.",
+    "access": "Parter, fără trepte. Intrarea e pe partea dreaptă a clădirii.",
 
     # Din Google Maps: Share -> Embed a map -> copiezi doar valoarea src.
     "map_embed_url": "https://www.google.com/maps?q=Sighisoara&output=embed",
     "maps_url": "https://www.google.com/maps/search/?api=1&query=Sighisoara",
     "waze_url": "https://waze.com/ul?q=Sighisoara",
+    "whatsapp_url": "https://wa.me/40771219234",
 }

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Servicii și prețuri — {{ clinic.name }}{% endblock %}
+
+{% block content %}
+
+<section class="phead">
+    <div class="wrap">
+        <h1>Servicii și prețuri</h1>
+        <p>
+            Prețurile de mai jos sunt cele pe care le plătești. Dacă în timpul
+            consultației apare ceva în plus, îți spunem înainte, nu la casă.
+        </p>
+    </div>
+</section>
+
+<section class="band-tight">
+    <div class="wrap">
+
+        {% for category in categories %}
+            <section class="cat" id="{{ category.slug }}">
+                <div class="cat-head">
+                    <h2>{{ category.name }}</h2>
+                    {% if category.description %}<p>{{ category.description }}</p>{% endif %}
+                </div>
+
+                {% for service in category.live_services %}
+                    <div class="row">
+                        <span class="row-name">
+                            {{ service.name }}
+                            {% if service.description %}
+                                <span class="row-desc">{{ service.description }}</span>
+                            {% endif %}
+                        </span>
+                        <span class="row-dur">{{ service.duration }} min</span>
+                        <span class="row-price">{{ service.price_label|default:"la consultație" }}</span>
+                    </div>
+                {% endfor %}
+            </section>
+        {% empty %}
+            <p>Lista de servicii se completează în curând.</p>
+        {% endfor %}
+
+    </div>
+</section>
+
+<section class="band band-forest">
+    <div class="wrap">
+        <div class="lead-in">
+            <h2>Nu știi de ce ai nevoie?</h2>
+            <p>
+                Vino la o consultație. Verificăm tot, îți spunem ce e urgent și ce
+                poate aștepta, și pleci cu un plan scris.
+            </p>
+        </div>
+        <a class="btn btn-line btn-lg" href="{% url 'booking' %}">Programează o consultație</a>
+    </div>
+</section>
+
+{% endblock %}

@@ -1,10 +1,9 @@
-<footer class="footer">
-    <div class="container">
+<footer class="foot">
+    <div class="wrap">
 
-        <div class="footer-grid">
-
+        <div class="foot-grid">
             <div>
-                <p class="footer-brand">{{ clinic.name }}</p>
+                <p class="foot-brand">{{ clinic.name }}</p>
                 <p>{{ clinic.tagline }}</p>
             </div>
 
@@ -20,16 +19,15 @@
             <div>
                 <h4>Pagini</h4>
                 <ul>
-                    <li><a href="{% url 'home' %}#servicii">Servicii &amp; Prețuri</a></li>
+                    <li><a href="{% url 'services' %}">Servicii și prețuri</a></li>
                     <li><a href="{% url 'home' %}#despre">Despre medic</a></li>
-                    <li><a href="{% url 'home' %}#contact">Contact</a></li>
+                    <li><a href="{% url 'contact' %}">Contact</a></li>
                     <li><a href="{% url 'booking' %}">Programează-te</a></li>
                 </ul>
             </div>
-
         </div>
 
-        <div class="footer-bottom">
+        <div class="foot-end">
             <span>&copy; {% now "Y" %} {{ clinic.name }}</span>
             <span>Politica de confidențialitate · Termeni</span>
         </div>

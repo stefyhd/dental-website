@@ -1,0 +1,60 @@
+{% comment %}
+Blocul de contact. Inclus și pe homepage, și pe pagina Contact — un singur
+loc de întreținut, două locuri unde apare.
+{% endcomment %}
+
+<div class="contact-in">
+
+    <div>
+        <dl class="facts">
+            <div>
+                <dt class="fact-k">Adresă</dt>
+                <dd class="fact-v">{{ clinic.address }}</dd>
+            </div>
+            <div>
+                <dt class="fact-k">Telefon</dt>
+                <dd><a class="fact-v" href="tel:{{ clinic.phone_raw }}">{{ clinic.phone_display }}</a></dd>
+            </div>
+            <div>
+                <dt class="fact-k">WhatsApp</dt>
+                <dd><a class="fact-v" href="{{ clinic.whatsapp_url }}">Scrie-ne un mesaj</a></dd>
+            </div>
+            <div>
+                <dt class="fact-k">Email</dt>
+                <dd><a class="fact-v" href="mailto:{{ clinic.email }}">{{ clinic.email }}</a></dd>
+            </div>
+        </dl>
+
+        <p class="fact-k">Program</p>
+        <table class="hours">
+            {% for day in week_hours %}
+                <tr {% if day.is_today %}class="now"{% endif %}>
+                    <th scope="row">{{ day.label }}</th>
+                    <td>
+                        {% if day.is_closed %}Închis
+                        {% else %}{{ day.opening_time|time:"H:i" }}–{{ day.closing_time|time:"H:i" }}{% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div>
+        {% comment %}
+          Harta nu se încarcă până la click. Un iframe Google trimite IP-ul
+          vizitatorului către Google înainte de orice consimțământ.
+        {% endcomment %}
+        <div class="map" data-map="{{ clinic.map_embed_url }}">
+            <button class="map-ask" type="button">
+                <span class="btn btn-line">Arată harta</span>
+                <small>Se încarcă de la Google abia când apeși, ca să nu trimitem date fără acordul tău.</small>
+            </button>
+        </div>
+
+        <div class="map-go">
+            <a class="btn btn-solid" href="{{ clinic.maps_url }}" target="_blank" rel="noopener">Google Maps</a>
+            <a class="btn btn-line" href="{{ clinic.waze_url }}" target="_blank" rel="noopener">Waze</a>
+        </div>
+    </div>
+
+</div>

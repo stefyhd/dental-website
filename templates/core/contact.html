@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Contact — {{ clinic.name }}{% endblock %}
+
+{% block content %}
+
+<section class="phead">
+    <div class="wrap">
+        <h1>Contact și program</h1>
+        <p>
+            Cel mai rapid răspuns îl primești pe telefon. Dacă suntem cu un pacient,
+            scrie pe WhatsApp și revenim în aceeași zi.
+        </p>
+    </div>
+</section>
+
+<section class="band-tight">
+    <div class="wrap">
+        {% include "core/_contact_block.html" %}
+    </div>
+</section>
+
+<section class="band band-oat">
+    <div class="wrap">
+        <div class="lead-in">
+            <h2>Cum ajungi</h2>
+            <p>Câteva lucruri utile înainte să pornești spre cabinet.</p>
+        </div>
+
+        <div class="visit">
+            <article class="visit-step">
+                <p class="visit-n">Cu mașina</p>
+                <h3>Parcare</h3>
+                <p>{{ clinic.parking }}</p>
+            </article>
+
+            <article class="visit-step">
+                <p class="visit-n">Pe jos</p>
+                <h3>Reper</h3>
+                <p>La doi pași de {{ clinic.landmark }}.</p>
+            </article>
+
+            <article class="visit-step">
+                <p class="visit-n">La intrare</p>
+                <h3>Accesul</h3>
+                <p>{{ clinic.access }}</p>
+            </article>
+        </div>
+    </div>
+</section>
+
+<section class="band band-forest">
+    <div class="wrap">
+        <div class="lead-in">
+            <h2>Ai o urgență acum?</h2>
+            <p>
+                Dacă ești pacientul cabinetului și te-a apucat durerea, sună. Ținem
+                liber un interval în fiecare zi exact pentru asta.
+            </p>
+        </div>
+        <a class="btn btn-line btn-lg" href="tel:{{ clinic.phone_raw }}">Sună {{ clinic.phone_display }}</a>
+    </div>
+</section>
+
+{% endblock %}

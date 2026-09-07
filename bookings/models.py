@@ -8,6 +8,10 @@ class ServiceCategory(models.Model):
     description = models.TextField(blank=True)
     order = models.PositiveIntegerField(default=0)
     is_active = models.BooleanField(default=True)
+    is_featured = models.BooleanField(
+        default=False,
+        help_text="Apare pe prima pagină. Alege 3-4 — mai multe încarcă pagina.",
+    )
 
     class Meta:
         ordering = ["order", "name"]

@@ -147,12 +147,13 @@ class AppointmentEditForm(forms.ModelForm):
 class ServiceCategoryForm(forms.ModelForm):
     class Meta:
         model = ServiceCategory
-        fields = ["name", "description", "order", "is_active"]
+        fields = ["name", "description", "order", "is_active", "is_featured"]
         labels = {
             "name": "Nume categorie",
             "description": "Descriere (apare pe site)",
             "order": "Ordine de afișare",
             "is_active": "Activă",
+            "is_featured": "Pe prima pagină",
         }
         widgets = {
             "description": forms.Textarea(attrs={
