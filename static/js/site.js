@@ -36,14 +36,27 @@
         mv.className = "tooth-3d";
         mv.setAttribute("src", src);
         mv.setAttribute("alt", "Model 3D al unui molar");
-        mv.setAttribute("camera-orbit", "0deg 80deg 125%");
+        mv.setAttribute("camera-orbit", "0deg 80deg 116%");
         mv.setAttribute("field-of-view", "24deg");
         mv.setAttribute("environment-image", "neutral");
-        mv.setAttribute("exposure", "1.25");
+        mv.setAttribute("exposure", "1.45");
         mv.setAttribute("shadow-intensity", "0");
         mv.setAttribute("disable-zoom", "");
         mv.setAttribute("disable-tap", "");
         mv.setAttribute("interaction-prompt", "none");
+        mv.addEventListener("load", function () {
+            /* Modelul vine gri de pe Sketchfab. Îl facem alb de smalț.
+               ATENȚIE la `roughness`: la 0.35 dintele iese mat, ca de
+               ipsos. Smalțul are luciu — 0.16 (aproape cât originalul,
+               0.165) readuce reflexiile de pe cuspide. */
+            var material = mv.model && mv.model.materials[0];
+            if (material) {
+                material.pbrMetallicRoughness.setBaseColorFactor([1, 1, 1, 1]);
+                material.pbrMetallicRoughness.setMetallicFactor(0.06);
+                material.pbrMetallicRoughness.setRoughnessFactor(0.16);
+            }
+            stage.classList.add("ready");
+        });
 
         if (!calm) {
             mv.setAttribute("auto-rotate", "");
@@ -94,45 +107,56 @@
 
     /* Sloturile ocolesc mijlocul, unde stă dintele. */
     var PLUS_SLOTS = [
-        { top: "18%", side: "left" },
-        { top: "33%", side: "left" },
+        { top: "18%", side: "right" },
+        { top: "33%", side: "right" },
         { top: "49%", side: "left" },
         { top: "65%", side: "left" },
         { top: "78%", side: "left" },
         { top: "25%", side: "right" },
         { top: "42%", side: "right" },
         { top: "58%", side: "right" },
-        { top: "73%", side: "right" }
+
     ];
 
     var PLUS_SHOWN = 3;      /* câte se văd în același timp */
-    var PLUS_FADE = 500;     /* ms, trebuie să fie cât tranziția din CSS */
+    var PLUS_FADE = 500;     /* ms, trebuie să fie cât tranziția din CSS */ 
+    var PLUS_GAP = 15;        /* câte de pixeli de la altă etichetă pentru a fi liber */
+
+  
 
     function pick(list) {
         return list[Math.floor(Math.random() * list.length)];
     }
 
-    function startPlusField(field) {
+        function startPlusField(field) {
         var live = [];
 
-        function free(all, taken) {
-            return all.filter(function (item) { return taken.indexOf(item) < 0; });
-        }
+        function height(slot) { return parseFloat(slot.top); }
 
         function spawn() {
-            var slots = free(PLUS_SLOTS, live.map(function (p) { return p.slot; }));
-            var texts = free(PLUS_TEXT, live.map(function (p) { return p.text; }));
+            /* Un slot e liber dacă nu e ocupat ȘI dacă nu e prea aproape
+               pe verticală de altă etichetă. Fără regula a doua, una din
+               stânga și una din centru pot ajunge la aceeași înălțime și
+               se suprapun. */
+            var slots = PLUS_SLOTS.filter(function (slot) {
+                return live.every(function (item) {
+                    return item.slot !== slot &&
+                           Math.abs(height(item.slot) - height(slot)) >= PLUS_GAP;
+                });
+            });
+            var texts = PLUS_TEXT.filter(function (text) {
+                return live.every(function (item) { return item.text !== text; });
+            });
             if (!slots.length || !texts.length) return;
 
             var slot = pick(slots);
             var text = pick(texts);
 
             var el = document.createElement("span");
-            el.className = "plus";
+            el.className = "plus plus-" + slot.side;
             el.style.top = slot.top;
-            el.style[slot.side] = "5%";
             el.innerHTML = "<i>+</i>";
-            el.appendChild(document.createTextNode(" " + text));
+            el.appendChild(document.createTextNode(text));
 
             field.appendChild(el);
 
@@ -154,7 +178,10 @@
             }, 4500 + Math.random() * 3000);
         }
 
+        /* Scoatem cele trei etichete statice din HTML — de aici încolo
+           le construiește JS-ul. */
         field.innerHTML = "";
+
         for (var i = 0; i < PLUS_SHOWN; i++) {
             setTimeout(spawn, i * 700);
         }
@@ -211,20 +238,5 @@
     });
 })();
 
-    /* Sloturile ocolesc două lucruri: mijlocul, unde stă dintele, și
-       colțurile pe care masca le taie. Coloana din stânga începe abia
-       sub scobitura de sus (26,5%), iar cea din dreapta se oprește
-       deasupra scobiturii de jos (72%) — altfel eticheta iese pe alb
-       și rămâne tăiată la jumătate.
-       Dacă schimbi masca, aici trebuie umblat. */
-    var PLUS_SLOTS = [
-        { top: "32%", side: "left" },
-        { top: "44%", side: "left" },
-        { top: "56%", side: "left" },
-        { top: "68%", side: "left" },
-        { top: "79%", side: "left" },
-        { top: "12%", side: "right" },
-        { top: "26%", side: "right" },
-        { top: "40%", side: "right" },
-        { top: "54%", side: "right" }
-    ];
+
+    

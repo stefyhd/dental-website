@@ -235,11 +235,9 @@ section[id] { scroll-margin-top: 90px; }
     overflow: hidden;
 }
 
-/* Coloanele pornesc de la aceeași linie de sus. `center` le
-   dezaliniază vizibil când textul și forma au înălțimi diferite. */
 .hero-in {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 520px);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 440px);
     gap: var(--s8);
     align-items: start;
 }
@@ -271,23 +269,21 @@ section[id] { scroll-margin-top: 90px; }
 
 /* ---- Forma din hero ---- */
 
+/* ---- Forma din hero ---- */
+
 .stage { position: relative; }
 .shape-wrap { position: relative; }
 
+/* `aspect-ratio` = dimensiunile frame-ului din Figma (629 × 831).
+   Dacă nu se potrivesc, masca taie forma pe diagonală. */
 .shape {
     position: relative;
-    aspect-ratio: 1 / 1.02;
+    aspect-ratio: 629 / 831;
     background: var(--green);
-    border-radius: var(--r-shape);
     clip-path: url(#shapeMask);
     overflow: hidden;
 }
 
-/* Scurtături: apel, WhatsApp, email. Coloană verticală în scobitura
-   din colțul de sus-stânga. Sunt în afara `.shape`, deci masca nu le
-   taie. Pătrate, nu cercuri — cercurile trag spre „prietenos".
-   ÎNĂLȚIMEA COLOANEI (3×40 + 2×6 = 132px) trebuie să încapă în
-   scobitură; dacă schimbi masca, verifică asta prima dată. */
 .shortcuts {
     position: absolute;
     top: 0;
@@ -295,23 +291,34 @@ section[id] { scroll-margin-top: 90px; }
     display: flex;
     flex-direction: column;
     gap: 6px;
+    /* Lățimea e PROCENT din formă, nu pixeli. Scobitura ține 15,5%
+       din lățime și 34,9% din înălțime; trei butoane de 12% lățime
+       (adică 9,1% din înălțime, forma fiind 629×831) plus spații fac
+       ~29% — încap la orice dimensiune a ecranului, fără breakpoint. */
+    width: 12%;
 }
 .shortcut {
     display: grid;
     place-items: center;
-    width: 40px; height: 40px;
-    background: var(--white);
-    border: 1px solid var(--line-strong);
-    border-radius: var(--r-sm);
-    color: var(--green);
-    transition: border-color .16s ease, color .16s ease;
+    width: 100%;
+    aspect-ratio: 1;
+    background: var(--green);
+    border: 1px solid var(--green);
+    border-radius: var(--r-pill);
+    color: var(--white);
+    transition: background-color .16s ease, border-color .16s ease;
 }
-.shortcut:hover { border-color: var(--green); color: var(--ink); }
-.shortcut svg { width: 18px; height: 18px; }
+.shortcut:hover { background: var(--ink); border-color: var(--ink); }
+.shortcut svg { width: 40%; height: auto; }
 
+/* Dintele: mare, și împins spre dreapta. Centrat perfect ar fi
+   prea așezat — decentrat lasă loc etichetelor din stânga și dă
+   compoziției un pic de tensiune.
+   inset = sus | dreapta | jos | stânga. Stânga mai mare decât
+   dreapta = dintele stă mai la dreapta. */
 .tooth-stage {
     position: absolute;
-    inset: 12% 24% 16% 24%;
+    inset: 6% 8% 10% 22%;
 }
 .tooth-flat {
     width: 100%;
@@ -346,12 +353,23 @@ section[id] { scroll-margin-top: 90px; }
     pointer-events: none;
 }
 
+/* Cele două benzi în care au voie să apară etichetele. Sunt exact
+   porțiunile care rămân VERZI în masca din Figma, plus o margine
+   față de dinte:
+     stânga  — începe sub scobitura de sus (34,9%)
+     dreapta — se oprește deasupra scobiturii de jos (86,6%)
+   Dacă schimbi masca, umbli AICI, la două rânduri, nu la fiecare
+   slot din site.js. Asta e tot ce ține etichetele în cadru. */
+.plus-band { position: absolute; }
+.plus-left  { left: 4%;  width: 25%; top: 40%; height: 52%; }
+.plus-right { right: 3%; width: 25%; top: 4%;  height: 74%; }
+
 .plus {
     position: absolute;
     display: flex;
     align-items: flex-start;
     gap: 7px;
-    max-width: 122px;
+    max-width: 100%;
     color: var(--white);
     font-size: 13px;
     font-weight: 500;
@@ -372,30 +390,32 @@ section[id] { scroll-margin-top: 90px; }
     opacity: .7;
 }
 
-/* Pozițiile din HTML — se văd doar dacă JS-ul nu rulează. */
-.p1 { top: 27%; left: 5%; }
-.p2 { top: 43%; right: 5%; }
-.p3 { top: 65%; left: 5%; }
+/* Pozițiile din HTML — se văd doar dacă JS-ul nu rulează. Stau în
+   aceleași zone sigure ca benzile de mai sus. */
+.p1 { top: 45%; left: 4%;  max-width: 25%; }
+.p2 { top: 20%; right: 3%; max-width: 25%; }
+.p3 { top: 70%; left: 4%;  max-width: 25%; }
 
 
-
-/* Pastila „Servicii" stă în scobitura din colțul de jos-dreapta al
-   siluetei — de aia are masca treapta aia. Zona e albă, deci pastila
-   e verde: pe verde ar dispărea în fundal.
-   Lățimea trebuie să rămână sub 22%, cât ține scobitura din mască. */
 .shape-cta {
     position: absolute;
     right: 0;
     bottom: 0;
-    width: 21%;
-    height: 20%;
+    width: 44.4%;
+    height: 13.4%;
     display: grid;
-    place-items: center;
+    place-items: stretch;
+    /* Aer sus și în stânga: fără el pastila umple scobitura exact și
+       cele două forme se topesc una în alta — se pierde și scobitura,
+       și butonul. Cu 10px de alb în jur, scobitura citește ca decupaj
+       intenționat, iar butonul ca obiect așezat în el. */
+    padding: 10px 0 0 12px;
 }
 .shape-cta .btn {
     width: 100%;
-    padding: 15px 10px;
+    padding: 0;
     border-radius: var(--r-pill);
+    font-size: 16px;
 }
 
 
@@ -842,10 +862,6 @@ a.fact-v:hover { color: var(--green); text-decoration: underline; }
     /* Sub 980px scobitura e prea mică pentru coloana de scurtături,
        așa că ies din ea și stau pe un rând, sub formă. */
     .stage {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: var(--s5);
         max-width: 420px;
     }
     .shape-wrap { width: 100%; }
@@ -912,7 +928,19 @@ a.fact-v:hover { color: var(--green); text-decoration: underline; }
     .urgency-in { min-height: 38px; }
 }
 
-@media (max-width: 420px) {
+@media (max-width: 560px) {
+    /* Pastilele se strâng, dar rămân pastile — sub 12px textul din
+       ele nu se mai citește pe un ecran de telefon. */
+    .plus {
+        max-width: 56%;
+        padding: 6px 12px 6px 6px;
+        gap: 7px;
+        font-size: 12.5px;
+    }
+    .plus i { width: 21px; height: 21px; font-size: 13px; }
+}
+
+@media (max-width: 400px) {
     .hero-do .btn-lg { width: 100%; }
-    .plus { max-width: 96px; font-size: 11.5px; }
+    .shortcuts { gap: 4px; }
 }
