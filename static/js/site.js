@@ -5,68 +5,169 @@
 (function () {
     "use strict";
 
-    /* Molar văzut din lateral: coroană lată cu două cuspide, gât strâns,
-       două rădăcini care se depărtează. Silueta veche era o picătură. */
-    var TOOTH = "M 38 62 C 40 38, 56 24, 74 26 C 86 27, 90 40, 100 40 " +
-                "C 110 40, 114 27, 126 26 C 144 24, 160 38, 162 62 " +
-                "C 165 84, 160 106, 150 120 C 145 127, 144 140, 144 156 " +
-                "C 144 184, 139 210, 133 226 C 129 237, 116 237, 114 226 " +
-                "C 110 200, 107 174, 104 152 C 102 142, 98 142, 96 152 " +
-                "C 93 174, 90 200, 86 226 C 84 237, 71 237, 67 226 " +
-                "C 61 210, 56 184, 56 156 C 56 140, 55 127, 50 120 " +
-                "C 40 106, 35 84, 38 62 Z";
-
-    var LAYERS = 26;   /* mai multe = mai solid, dar mai scump de desenat */
-    var STEP = 1.6;    /* px între straturi pe axa Z */
+    var calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var wide = window.matchMedia("(min-width: 769px)").matches;
 
     /* -----------------------------------------------------
        Dintele 3D.
 
-       Nu încărcăm o bibliotecă 3D și nu avem model. Extrudăm
-       silueta: 26 de copii ale conturului, așezate una în
-       spatele alteia pe Z, de la clar în față la umbrit în
-       spate. Rotit, parallaxul dintre straturi citește ca un
-       volum real — și cântărește cât un SVG.
+       Modelul e un molar real (glTF binar, 220 KB) afișat cu
+       <model-viewer> de la Google. Nu scriem Three.js: eticheta
+       se ocupă singură de cameră, lumini și rotire.
+
+       Îl încărcăm DOAR pe desktop și doar prin JS, ca telefonul
+       să nu ia nici modelul, nici biblioteca. Până se încarcă
+       (și dacă nu se încarcă deloc) rămâne silueta plată din
+       HTML, deci hero-ul nu are niciodată o gaură.
        ----------------------------------------------------- */
-    function mix(a, b, t) {
-        return a.map(function (v, i) { return Math.round(v + (b[i] - v) * t); });
-    }
+    function loadTooth(stage) {
+        var src = stage.dataset.model;
+        if (!src || !stage.dataset.lib) return;
 
-    function buildTooth(stage) {
-        var front = [255, 255, 255];
-        var back = [124, 150, 138];   /* verde-gri rece: intră în fundal */
+        /* Biblioteca stă în static/, nu pe un CDN. Un CDN ar trimite
+           IP-ul vizitatorului către alt server înainte de orice acord —
+           exact ce evităm și la hartă. */
+        var lib = document.createElement("script");
+        lib.type = "module";
+        lib.src = stage.dataset.lib;
+        document.head.appendChild(lib);
 
-        var solid = document.createElement("div");
-        solid.className = "tooth-3d";
+        var mv = document.createElement("model-viewer");
+        mv.className = "tooth-3d";
+        mv.setAttribute("src", src);
+        mv.setAttribute("alt", "Model 3D al unui molar");
+        mv.setAttribute("camera-orbit", "0deg 80deg 125%");
+        mv.setAttribute("field-of-view", "24deg");
+        mv.setAttribute("environment-image", "neutral");
+        mv.setAttribute("exposure", "1.25");
+        mv.setAttribute("shadow-intensity", "0");
+        mv.setAttribute("disable-zoom", "");
+        mv.setAttribute("disable-tap", "");
+        mv.setAttribute("interaction-prompt", "none");
 
-        for (var i = 0; i < LAYERS; i++) {
-            var t = i / (LAYERS - 1);
-            var rgb = mix(front, back, t);
-
-            var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-            svg.setAttribute("viewBox", "0 0 200 250");
-            svg.setAttribute("aria-hidden", "true");
-            svg.style.transform = "translateZ(" + (-i * STEP) + "px)";
-
-            var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-            path.setAttribute("d", TOOTH);
-            path.setAttribute("fill", "rgb(" + rgb.join(",") + ")");
-
-            svg.appendChild(path);
-            solid.appendChild(svg);
+        if (!calm) {
+            mv.setAttribute("auto-rotate", "");
+            mv.setAttribute("auto-rotate-delay", "300");
+            mv.setAttribute("rotation-per-second", "16deg");
         }
 
-        stage.innerHTML = "";
-        stage.appendChild(solid);
+        mv.addEventListener("load", function () {
+            /* Modelul vine gri de pe Sketchfab. Îl facem alb de smalț. */
+            var material = mv.model && mv.model.materials[0];
+            if (material) {
+                material.pbrMetallicRoughness.setBaseColorFactor([1, 1, 1, 1]);
+                material.pbrMetallicRoughness.setMetallicFactor(0);
+                material.pbrMetallicRoughness.setRoughnessFactor(0.35);
+            }
+            stage.classList.add("ready");
+        });
+
+        stage.appendChild(mv);
     }
 
     var stage = document.querySelector("[data-tooth]");
-    var calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    var wide = window.matchMedia("(min-width: 769px)").matches;
 
-    /* Pe telefon forma e ascunsă oricum, deci n-are rost s-o construim. */
-    if (stage && wide && !calm) {
-        buildTooth(stage);
+    if (stage && wide) {
+        loadTooth(stage);
+    }
+
+    /* -----------------------------------------------------
+       Etichetele „+".
+
+       Nu sunt fixe: apar și dispar continuu, pe poziții alese
+       aleator dintr-un set de sloturi care ocolesc dintele.
+       Trei odată, ca să nu se aglomereze forma.
+
+       Ca să adaugi/scoți un beneficiu, editează DOAR lista de
+       mai jos.
+    ----------------------------------------------------- */
+    var PLUS_TEXT = [
+        "Anestezie fără durere",
+        "Radiografie pe loc",
+        "Preț spus înainte",
+        "Plan de tratament scris",
+        "Sterilizare documentată",
+        "Garanție scrisă la lucrări",
+        "Urgențe în aceeași zi",
+        "Același medic de fiecare dată"
+    ];
+
+    /* Sloturile ocolesc mijlocul, unde stă dintele. */
+    var PLUS_SLOTS = [
+        { top: "18%", side: "left" },
+        { top: "33%", side: "left" },
+        { top: "49%", side: "left" },
+        { top: "65%", side: "left" },
+        { top: "78%", side: "left" },
+        { top: "25%", side: "right" },
+        { top: "42%", side: "right" },
+        { top: "58%", side: "right" },
+        { top: "73%", side: "right" }
+    ];
+
+    var PLUS_SHOWN = 3;      /* câte se văd în același timp */
+    var PLUS_FADE = 500;     /* ms, trebuie să fie cât tranziția din CSS */
+
+    function pick(list) {
+        return list[Math.floor(Math.random() * list.length)];
+    }
+
+    function startPlusField(field) {
+        var live = [];
+
+        function free(all, taken) {
+            return all.filter(function (item) { return taken.indexOf(item) < 0; });
+        }
+
+        function spawn() {
+            var slots = free(PLUS_SLOTS, live.map(function (p) { return p.slot; }));
+            var texts = free(PLUS_TEXT, live.map(function (p) { return p.text; }));
+            if (!slots.length || !texts.length) return;
+
+            var slot = pick(slots);
+            var text = pick(texts);
+
+            var el = document.createElement("span");
+            el.className = "plus";
+            el.style.top = slot.top;
+            el.style[slot.side] = "5%";
+            el.innerHTML = "<i>+</i>";
+            el.appendChild(document.createTextNode(" " + text));
+
+            field.appendChild(el);
+
+            /* Citirea asta forțează browserul să calculeze layoutul acum,
+               ca tranziția să pornească de la opacity 0 în loc să sară
+               direct la 1. Fără ea, elementul apare instantaneu. */
+            void el.offsetWidth;
+            el.classList.add("on");
+
+            var item = { slot: slot, text: text };
+            live.push(item);
+
+            setTimeout(function () {
+                el.classList.remove("on");
+                setTimeout(function () {
+                    el.remove();
+                    live.splice(live.indexOf(item), 1);
+                }, PLUS_FADE);
+            }, 4500 + Math.random() * 3000);
+        }
+
+        field.innerHTML = "";
+        for (var i = 0; i < PLUS_SHOWN; i++) {
+            setTimeout(spawn, i * 700);
+        }
+        setInterval(function () {
+            if (live.length < PLUS_SHOWN) spawn();
+        }, 1400);
+    }
+
+    var field = document.querySelector("[data-plus]");
+
+    /* Cu „reduce motion" pornit rămân cele trei din HTML, nemișcate. */
+    if (field && !calm) {
+        startPlusField(field);
     }
 
 
@@ -109,3 +210,21 @@
         });
     });
 })();
+
+    /* Sloturile ocolesc două lucruri: mijlocul, unde stă dintele, și
+       colțurile pe care masca le taie. Coloana din stânga începe abia
+       sub scobitura de sus (26,5%), iar cea din dreapta se oprește
+       deasupra scobiturii de jos (72%) — altfel eticheta iese pe alb
+       și rămâne tăiată la jumătate.
+       Dacă schimbi masca, aici trebuie umblat. */
+    var PLUS_SLOTS = [
+        { top: "32%", side: "left" },
+        { top: "44%", side: "left" },
+        { top: "56%", side: "left" },
+        { top: "68%", side: "left" },
+        { top: "79%", side: "left" },
+        { top: "12%", side: "right" },
+        { top: "26%", side: "right" },
+        { top: "40%", side: "right" },
+        { top: "54%", side: "right" }
+    ];

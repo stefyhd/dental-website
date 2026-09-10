@@ -263,33 +263,16 @@ section[id] { scroll-margin-top: 90px; }
 
 .hero-do {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     flex-wrap: wrap;
     gap: var(--s4);
 }
-
-/* Scurtături: apel, WhatsApp, email. Pătrate, nu cercuri —
-   cercurile trag imediat spre „prietenos". */
-.shortcuts {
-    display: flex;
-    gap: var(--s2);
-}
-.shortcut {
-    display: grid;
-    place-items: center;
-    width: 52px; height: 52px;
-    border: 1px solid var(--line-strong);
-    border-radius: var(--r-sm);
-    color: var(--green);
-    transition: border-color .16s ease, color .16s ease;
-}
-.shortcut:hover { border-color: var(--green); color: var(--ink); }
-.shortcut svg { width: 19px; height: 19px; }
 
 
 /* ---- Forma din hero ---- */
 
 .stage { position: relative; }
+.shape-wrap { position: relative; }
 
 .shape {
     position: relative;
@@ -300,48 +283,86 @@ section[id] { scroll-margin-top: 90px; }
     overflow: hidden;
 }
 
-.tooth-stage {
+/* Scurtături: apel, WhatsApp, email. Coloană verticală în scobitura
+   din colțul de sus-stânga. Sunt în afara `.shape`, deci masca nu le
+   taie. Pătrate, nu cercuri — cercurile trag spre „prietenos".
+   ÎNĂLȚIMEA COLOANEI (3×40 + 2×6 = 132px) trebuie să încapă în
+   scobitură; dacă schimbi masca, verifică asta prima dată. */
+.shortcuts {
     position: absolute;
-    inset: 13% 26% 19% 26%;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.shortcut {
     display: grid;
     place-items: center;
-    perspective: 900px;
+    width: 40px; height: 40px;
+    background: var(--white);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-sm);
+    color: var(--green);
+    transition: border-color .16s ease, color .16s ease;
 }
-.tooth-flat { width: 100%; height: auto; }
+.shortcut:hover { border-color: var(--green); color: var(--ink); }
+.shortcut svg { width: 18px; height: 18px; }
 
-/* Extrudare în straturi: N copii ale siluetei pe axa Z. Nu e
-   un model 3D, dar parallaxul dintre straturi citește ca volum
-   și cântărește cât un SVG. */
-.tooth-3d {
-    position: relative;
-    width: 100%;
-    transform-style: preserve-3d;
-    transform: rotateX(8deg) rotateY(-17deg);
+.tooth-stage {
+    position: absolute;
+    inset: 12% 24% 16% 24%;
 }
-.tooth-3d svg {
+.tooth-flat {
+    width: 100%;
+    height: 100%;
+    transition: opacity .4s ease;
+}
+
+/* Modelul 3D intră peste silueta plată abia după ce s-a încărcat,
+   ca să nu existe o gaură în hero cât se descarcă. */
+.tooth-3d {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
+    opacity: 0;
+    transition: opacity .6s ease;
+    --poster-color: transparent;
+    --progress-bar-color: transparent;
+    background: transparent;
 }
-.tooth-3d svg:first-child { position: relative; }
+.tooth-stage.ready .tooth-3d  { opacity: 1; }
+.tooth-stage.ready .tooth-flat { opacity: 0; }
 
 /* ---- Semnele „+" cu beneficiu ---- */
+
+/* Terenul pe care JS-ul așază etichetele. Ascuns pentru cititoarele
+   de ecran: text care apare și dispare singur e zgomot, iar aceleași
+   informații stau scrise mai jos, în secțiunea de standarde. */
+.plus-field {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
 
 .plus {
     position: absolute;
     display: flex;
     align-items: flex-start;
     gap: 7px;
-    max-width: 132px;
+    max-width: 122px;
     color: var(--white);
     font-size: 13px;
     font-weight: 500;
     line-height: 1.35;
     letter-spacing: -.005em;
     opacity: 0;
-    animation: plus-in .7s ease forwards;
+    transform: translateY(6px);
+    transition: opacity .5s ease, transform .5s ease;
 }
+.plus.on { opacity: 1; transform: none; }
+
 .plus i {
     flex: none;
     font-style: normal;
@@ -351,14 +372,12 @@ section[id] { scroll-margin-top: 90px; }
     opacity: .7;
 }
 
-@keyframes plus-in {
-    from { opacity: 0; transform: translateY(6px); }
-    to   { opacity: 1; transform: none; }
-}
+/* Pozițiile din HTML — se văd doar dacă JS-ul nu rulează. */
+.p1 { top: 27%; left: 5%; }
+.p2 { top: 43%; right: 5%; }
+.p3 { top: 65%; left: 5%; }
 
-.p1 { top: 27%; left: 6%; }
-.p2 { top: 43%; right: 6%; }
-.p3 { top: 65%; left: 6%; }
+
 
 /* Pastila „Servicii" stă în scobitura din colțul de jos-dreapta al
    siluetei — de aia are masca treapta aia. Zona e albă, deci pastila
@@ -820,6 +839,19 @@ a.fact-v:hover { color: var(--green); text-decoration: underline; }
     .doc-in,
     .contact-in { grid-template-columns: minmax(0, 1fr); gap: var(--s7); }
 
+    /* Sub 980px scobitura e prea mică pentru coloana de scurtături,
+       așa că ies din ea și stau pe un rând, sub formă. */
+    .stage {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--s5);
+        max-width: 420px;
+    }
+    .shape-wrap { width: 100%; }
+    .shortcuts { position: static; flex-direction: row; gap: var(--s2); }
+    .shortcut  { width: 46px; height: 46px; }
+
     .svc-grid { grid-template-columns: repeat(2, 1fr); }
     .std-row  { grid-template-columns: minmax(0, 1fr); gap: var(--s2); }
 }
@@ -851,8 +883,7 @@ a.fact-v:hover { color: var(--green); text-decoration: underline; }
     }
     .nav-cta { margin-top: var(--s4); }
 
-    /* Forma rămâne — e singura imagine a paginii. Doar se strânge. */
-    .stage { max-width: 420px; }
+
 
     .factbar-in { grid-template-columns: minmax(0, 1fr); }
     .fact-cell {
@@ -882,8 +913,6 @@ a.fact-v:hover { color: var(--green); text-decoration: underline; }
 }
 
 @media (max-width: 420px) {
-    .hero-do { display: block; }
     .hero-do .btn-lg { width: 100%; }
-    .shortcuts { margin-top: var(--s3); }
     .plus { max-width: 96px; font-size: 11.5px; }
 }
