@@ -47,19 +47,28 @@ def categories_with_services():
 
 
 def home(request):
-    # Pe prima pagină intră doar categoriile bifate „Pe prima pagină"
-    # din dashboard. Dacă medicul n-a bifat nimic, luăm primele trei,
-    # ca pagina să nu apară goală.
-    featured = [c for c in categories_with_services() if c.is_featured][:4]
+    """
+    Prima pagină arată TOATE categoriile active, într-o grilă de câte trei.
+    „Pe prima pagină" nu mai taie lista, doar urcă bifatele în capul ei —
+    un cabinet mic are zece categorii, nu o sută, iar vizitatorul vrea să
+    vadă dacă i se rezolvă problema aici, nu o selecție.
+    """
+    categories = list(
+        categories_with_services().order_by("-is_featured", "order", "name")
+    )
 
-    if not featured:
-        featured = list(categories_with_services())[:3]
+    # Prețul de pornire al categoriei = cel mai mic preț dintre serviciile
+    # ei. Se calculează aici, nu în șablon: `min()` nu există în template.
+    # (Atenție: `Service.price_from` e un bifaj „de la”, nu o sumă —
+    # suma e în `Service.price`.)
+    for category in categories:
+        prices = [s.price for s in category.live_services if s.price is not None]
+        category.starting_price = min(prices) if prices else None
 
     return render(request, "core/home.html", {
-        "featured": featured,
+        "categories": categories,
         "week_hours": get_week_hours(),
     })
-
 
 def services(request):
     return render(request, "core/services.html", {

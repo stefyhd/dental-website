@@ -6,10 +6,9 @@
 {% block content %}
 
 {% comment %}
-Masca formei: două blocuri decalate, ca în schiță. Unul înalt sus-dreapta,
-unul lat jos-stânga. Crestătura din stânga sus ține scurtăturile, cea din
-dreapta jos ține pastila „Servicii". Dintele și semnele din interior sunt
-TĂIATE de silueta asta, nu doar acoperite de ea.
+Masca formei din hero. Trei colțuri cu rază normală, iar al patrulea —
+jos-dreapta — o scobitură care face loc pastilei „Servicii". Dintele și
+etichetele dinăuntru sunt TĂIATE de siluetă, nu doar acoperite de ea.
 {% endcomment %}
 <svg width="0" height="0" aria-hidden="true" style="position:absolute">
     <defs>
@@ -36,13 +35,40 @@ TĂIATE de silueta asta, nu doar acoperite de ea.
 
             <p class="hero-copy">
                 Cabinet cu un singur medic, în {{ clinic.city }}. Consultația începe
-                cu o discuție și se termină cu un plan scris — și cu prețul spus
-                înainte, nu după.
+                cu o discuție și se termină cu un plan de tratament scris — cu etape,
+                durate și prețul spus înainte, nu după.
             </p>
 
+            {% comment %}
+            Un singur buton primar. „Servicii" apare pe pastila din formă —
+            două butoane pentru aceeași destinație împart atenția degeaba.
+            {% endcomment %}
             <div class="hero-do">
                 <a class="btn btn-solid btn-lg" href="{% url 'booking' %}">Programează-te</a>
-                <a class="btn btn-line btn-lg" href="{% url 'services' %}">Servicii și prețuri</a>
+
+                <div class="shortcuts">
+                    <a class="shortcut" href="tel:{{ clinic.phone_raw }}" aria-label="Sună la cabinet">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="1.9" stroke-linecap="round" aria-hidden="true">
+                            <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.4 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.4 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/>
+                        </svg>
+                    </a>
+
+                    <a class="shortcut" href="{{ clinic.whatsapp_url }}" target="_blank"
+                       rel="noopener" aria-label="Scrie-ne pe WhatsApp">
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3.1.8.8-3-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.1-.2 0-.4.1-.5l.4-.5c.1-.2.2-.3.3-.5v-.5l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.9.9-1 2.1-.4 3.3a11 11 0 0 0 4.2 4.4c1.6.8 2.6.9 3.5.7.6-.1 1.5-.7 1.7-1.3.2-.6.2-1.1.1-1.2z"/>
+                        </svg>
+                    </a>
+
+                    <a class="shortcut" href="mailto:{{ clinic.email }}" aria-label="Trimite un email">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/>
+                            <path d="M3 7l9 6 9-6"/>
+                        </svg>
+                    </a>
+                </div>
             </div>
         </div>
 
@@ -52,53 +78,71 @@ TĂIATE de silueta asta, nu doar acoperite de ea.
                 <div class="tooth-stage" data-tooth>
                     {# Fără JS rămâne silueta plată. Tot arată bine. #}
                     <svg class="tooth-flat" viewBox="0 0 200 250" aria-hidden="true">
-                        <path fill="#FBF7EE"
-                              d="M100 20 C55 20, 32 50, 36 92 C40 130, 52 178, 66 218
-                                 C72 236, 92 238, 95 218 L100 168 L105 218
-                                 C108 238, 128 236, 134 218 C148 178, 160 130, 164 92
-                                 C168 50, 145 20, 100 20 Z"/>
+                        <path fill="#FFFFFF"
+                              d="M 38 62 C 40 38, 56 24, 74 26 C 86 27, 90 40, 100 40
+                                 C 110 40, 114 27, 126 26 C 144 24, 160 38, 162 62
+                                 C 165 84, 160 106, 150 120 C 145 127, 144 140, 144 156
+                                 C 144 184, 139 210, 133 226 C 129 237, 116 237, 114 226
+                                 C 110 200, 107 174, 104 152 C 102 142, 98 142, 96 152
+                                 C 93 174, 90 200, 86 226 C 84 237, 71 237, 67 226
+                                 C 61 210, 56 184, 56 156 C 56 140, 55 127, 50 120
+                                 C 40 106, 35 84, 38 62 Z"/>
                     </svg>
                 </div>
 
-                <span class="plus plus-in plus-lg p1" style="animation-delay:0s">+</span>
-                <span class="plus plus-in plus-sm p2" style="animation-delay:.9s">+</span>
-                <span class="plus plus-in plus-md p3" style="animation-delay:1.8s">+</span>
-                <span class="plus plus-in plus-lg p4" style="animation-delay:2.7s">+</span>
-                <span class="plus plus-in plus-sm p5" style="animation-delay:3.6s">+</span>
-                <span class="plus plus-in plus-md p6" style="animation-delay:4.5s">+</span>
-            </div>
-
-            {# Scurtături reale: apel, WhatsApp, email. #}
-            <div class="shortcuts">
-                <a class="shortcut" href="tel:{{ clinic.phone_raw }}" aria-label="Sună la cabinet">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                         stroke-width="1.9" stroke-linecap="round" aria-hidden="true">
-                        <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.4 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.4 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/>
-                    </svg>
-                </a>
-
-                <a class="shortcut" href="{{ clinic.whatsapp_url }}" target="_blank"
-                   rel="noopener" aria-label="Scrie-ne pe WhatsApp">
-                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                        <path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3.1.8.8-3-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.1-.2 0-.4.1-.5l.4-.5c.1-.2.2-.3.3-.5v-.5l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.9.9-1 2.1-.4 3.3a11 11 0 0 0 4.2 4.4c1.6.8 2.6.9 3.5.7.6-.1 1.5-.7 1.7-1.3.2-.6.2-1.1.1-1.2z"/>
-                    </svg>
-                </a>
-
-                <a class="shortcut" href="mailto:{{ clinic.email }}" aria-label="Trimite un email">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                         stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/>
-                        <path d="M3 7l9 6 9-6"/>
-                    </svg>
-                </a>
+                {% comment %}
+                Semnele „+" poartă fiecare un beneficiu concret. Un „+" gol
+                e decor; unul cu „Anestezie fără durere" e informație.
+                {% endcomment %}
+                <span class="plus p1" style="animation-delay:.3s">
+                    <i aria-hidden="true">+</i> Anestezie fără durere
+                </span>
+                <span class="plus p2" style="animation-delay:.8s">
+                    <i aria-hidden="true">+</i> Radiografie pe loc
+                </span>
+                <span class="plus p3" style="animation-delay:1.3s">
+                    <i aria-hidden="true">+</i> Preț spus înainte
+                </span>
             </div>
 
             <div class="shape-cta">
                 <a class="btn btn-solid" href="{% url 'services' %}">Servicii</a>
             </div>
+        </div>
 
-            <span class="plus plus-out plus-md o1">+</span>
-            <span class="plus plus-out plus-sm o2">+</span>
+    </div>
+</section>
+
+
+{# ========================== BARĂ DE FAPTE ========================== #}
+{% comment %}
+Ce caută cineva în primele secunde pe site-ul unui cabinet: e deschis
+acum, unde e, ce număr are. Atât. Locul ăsta îl ocupa banda verde cu
+„12 ani / 45 de minute" — cifre care nu ajutau pe nimeni să decidă.
+{% endcomment %}
+<section class="factbar">
+    <div class="wrap factbar-in">
+
+        <div class="fact-cell">
+            <p class="fact-k">Program</p>
+            {% if today_hours and not today_hours.is_closed %}
+                <span class="fact-v">Astăzi {{ today_hours.opening_time|time:"H:i" }}–{{ today_hours.closing_time|time:"H:i" }}</span>
+            {% else %}
+                <span class="fact-v">Astăzi închis</span>
+            {% endif %}
+            <p class="fact-note">Urgențele pacienților cabinetului intră în aceeași zi.</p>
+        </div>
+
+        <div class="fact-cell">
+            <p class="fact-k">Cabinet</p>
+            <span class="fact-v">{{ clinic.address }}</span>
+            <p class="fact-note">La câteva minute de {{ clinic.landmark }}. Parter, fără trepte.</p>
+        </div>
+
+        <div class="fact-cell">
+            <p class="fact-k">Telefon</p>
+            <a class="fact-v" href="tel:{{ clinic.phone_raw }}">{{ clinic.phone_display }}</a>
+            <p class="fact-note">Programări și întrebări, direct la cabinet.</p>
         </div>
 
     </div>
@@ -148,31 +192,63 @@ TĂIATE de silueta asta, nu doar acoperite de ea.
 </section>
 
 
-{# ============================ STATISTICI ============================ #}
+{# ============================= MEDICUL ============================= #}
 {% comment %}
-Cifrele stau în frază, nu în carduri cu iconiță. Un cabinet mic nu se
-laudă cu grafice — povestește.
+Mutat imediat după „prima vizită". Într-un cabinet cu un singur medic,
+încrederea în cabinet ESTE încrederea în medic — n-are rost s-o amâni
+până după listele de servicii.
 {% endcomment %}
-<section class="band band-forest">
-    <div class="wrap">
-        <div class="figures">
-            <p>
-                Lucrez în {{ clinic.city }} de <span class="fig">12</span> ani. În tot acest
-                timp, fiecare pacient a fost consultat, tratat și controlat de aceeași
-                persoană — la noi nu există rotație de medici și nu repeți povestea
-                de la capăt la fiecare vizită.
-            </p>
-            <p>
-                O programare durează în medie <span class="fig">45</span> de minute,
-                pentru că explicațiile fac parte din tratament. Iar pentru pacienții
-                cabinetului ținem liber, în fiecare zi, <span class="fig">1</span>
-                interval pentru urgențe.
-            </p>
-            <p class="figures-note">
-                Nu sunt cifre de marketing. Sunt felul în care e organizat cabinetul,
-                și motivul pentru care nu putem primi oricâți pacienți.
-            </p>
+<section class="band band-white" id="despre">
+    <div class="wrap doc-in">
+
+        {% comment %}
+        Caseta ține locul pozei chiar dacă fișierul lipsește — altfel
+        coloana rămâne goală și grila arată stricată.
+        Comentariul scurt cu diez NU merge pe mai multe rânduri —
+        textul ajunge în pagină și devine element de grilă.
+        {% endcomment %}
+        <div class="doc-shot">
+            <img class="doc-photo" src="{% static 'img/doctor.jpg' %}"
+                 alt="{{ clinic.doctor_name }}" onerror="this.style.opacity='0'">
         </div>
+
+        <div>
+            <h2 class="doc-name">{{ clinic.doctor_name }}</h2>
+            <p class="doc-title">{{ clinic.doctor_role }}</p>
+
+            <p>
+                Am terminat Medicina Dentară la Târgu Mureș și am lucrat patru ani
+                într-o clinică mare, unde un pacient trecea prin trei medici pentru
+                o singură lucrare — unul consulta, altul trata, altul vedea rezultatul.
+                Nimeni nu răspundea de tot.
+            </p>
+
+            <p>
+                Am deschis cabinetul din {{ clinic.city }} ca să pot lucra altfel.
+                Aceeași persoană te consultă, îți face tratamentul și te vede la
+                control. Dacă ceva nu iese bine, știi pe cine să cauți.
+            </p>
+
+            {% comment %}
+            ÎNLOCUIEȘTE cu datele reale înainte de publicare. Sunt afirmații
+            despre o persoană identificabilă și despre competențe medicale —
+            în publicitatea medicală trebuie să fie exacte și verificabile.
+            {% endcomment %}
+            <ul class="creds">
+                <li><span>Formare</span> Medicină Dentară, UMF Târgu Mureș</li>
+                <li><span>Practică</span> 12 ani, din care 8 în cabinet propriu</li>
+                <li><span>Membru</span> Colegiul Medicilor Dentiști din România</li>
+                <li><span>Se ocupă de</span> Endodonție, protetică, estetică dentară</li>
+            </ul>
+
+            <blockquote class="doc-pull">
+                Nu vindem tratamente. Îți spunem ce ai, ce se poate face, cât costă,
+                și decizi tu.
+            </blockquote>
+
+            <a class="btn btn-solid" href="{% url 'booking' %}">Programează o consultație</a>
+        </div>
+
     </div>
 </section>
 
@@ -181,18 +257,29 @@ laudă cu grafice — povestește.
 <section class="band" id="servicii">
     <div class="wrap">
         <div class="lead-in">
-            <h2>Ce facem cel mai des</h2>
-            <p>Lista completă, cu prețuri, e pe pagina de servicii.</p>
+            <h2>Servicii</h2>
+            <p>
+                Toate categoriile pe care le tratăm în cabinet. Lista completă,
+                cu durate și prețuri, e pe pagina de servicii.
+            </p>
         </div>
 
         <div class="svc-grid">
-            {% for category in featured %}
+            {% for category in categories %}
                 <a class="svc" href="{% url 'services' %}#{{ category.slug }}">
                     <span class="svc-name">{{ category.name }}</span>
-                    {% if category.description %}
-                        <p class="svc-note">{{ category.description }}</p>
+
+                    {% comment %}
+                    Numele procedurilor, nu numărul lor. „4 servicii" nu spune
+                    nimănui dacă i se rezolvă problema aici.
+                    {% endcomment %}
+                    <p class="svc-list">
+                        {% for service in category.live_services|slice:":4" %}{{ service.name }}{% if not forloop.last %}, {% endif %}{% endfor %}{% if category.live_services|length > 4 %} și încă {{ category.live_services|length|add:"-4" }}{% endif %}
+                    </p>
+
+                    {% if category.starting_price %}
+                        <span class="svc-from">de la {{ category.starting_price|floatformat:0 }} lei</span>
                     {% endif %}
-                    <span class="svc-from">{{ category.live_services|length }} servicii</span>
                 </a>
             {% empty %}
                 <p>Serviciile se adaugă în curând.</p>
@@ -206,8 +293,13 @@ laudă cu grafice — povestește.
 </section>
 
 
-{# ===================== GARANȚII (în loc de recenzii) ===================== #}
-<section class="band band-forest">
+{# ============================ STANDARDE ============================ #}
+{% comment %}
+Aici stătea banda cu cifre. Cifrele nu conving pe nimeni să vină la
+stomatolog; procedurile verificabile, da. Rânduri cu linie, nu carduri —
+un protocol arată a protocol.
+{% endcomment %}
+<section class="band band-green">
     <div class="wrap">
         <div class="lead-in">
             <h2>Ce poți verifica, nu doar ce îți spunem</h2>
@@ -217,8 +309,8 @@ laudă cu grafice — povestește.
             </p>
         </div>
 
-        <div class="assure">
-            <div class="assure-item">
+        <div class="std">
+            <div class="std-row">
                 <h3>Sterilizare cu ciclu documentat</h3>
                 <p>
                     Autoclav clasa B. Fiecare ciclu e înregistrat, cu dată și oră.
@@ -226,15 +318,23 @@ laudă cu grafice — povestește.
                 </p>
             </div>
 
-            <div class="assure-item">
-                <h3>Materiale cu certificat</h3>
+            <div class="std-row">
+                <h3>Materiale cu lot și certificat</h3>
                 <p>
-                    Fiecare material folosit în gura ta are lot și certificat.
-                    Îți spunem ce marcă folosim și de ce, nu doar „un compozit bun".
+                    Fiecare material folosit în gura ta are lot și certificat. Îți
+                    spunem ce marcă folosim și de ce, nu doar „un compozit bun".
                 </p>
             </div>
 
-            <div class="assure-item">
+            <div class="std-row">
+                <h3>Radiografie digitală, pe loc</h3>
+                <p>
+                    Doză mult mai mică decât la filmul clasic. Imaginea apare pe
+                    ecran în aceeași secundă și ți-o putem trimite.
+                </p>
+            </div>
+
+            <div class="std-row">
                 <h3>Plan de tratament pe hârtie</h3>
                 <p>
                     Etape, durată, cost total. Îl primești înainte să începem și
@@ -242,7 +342,7 @@ laudă cu grafice — povestește.
                 </p>
             </div>
 
-            <div class="assure-item">
+            <div class="std-row">
                 <h3>Garanție scrisă la lucrări</h3>
                 <p>
                     Coroanele, punțile și lucrările pe implant vin cu garanție scrisă.
@@ -250,15 +350,7 @@ laudă cu grafice — povestește.
                 </p>
             </div>
 
-            <div class="assure-item">
-                <h3>Radiografii digitale</h3>
-                <p>
-                    Doză mult mai mică decât la filmul clasic, imaginea o vezi pe
-                    ecran în aceeași secundă și ți-o putem trimite.
-                </p>
-            </div>
-
-            <div class="assure-item">
+            <div class="std-row">
                 <h3>Urgențele pacienților noștri, în aceeași zi</h3>
                 <p>
                     Dacă ești pacientul cabinetului și te apucă durerea, ai loc azi.
@@ -288,10 +380,10 @@ laudă cu grafice — povestește.
                 <div>
                     <div class="ba" style="--pos:50%">
                         <img src="{% static 'img/ba-before.jpg' %}" alt="Înainte de tratament"
-                             onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22300%22%3E%3Crect width=%22400%22 height=%22300%22 fill=%22%23DCCFB6%22/%3E%3Ctext x=%2250%25%22 y=%2252%25%22 text-anchor=%22middle%22 font-family=%22sans-serif%22 font-size=%2222%22 fill=%22%236B5B44%22%3EÎnainte%3C/text%3E%3C/svg%3E'">
+                             onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22300%22%3E%3Crect width=%22400%22 height=%22300%22 fill=%22%23B9C6BE%22/%3E%3Ctext x=%2250%25%22 y=%2252%25%22 text-anchor=%22middle%22 font-family=%22sans-serif%22 font-size=%2222%22 fill=%22%2312211C%22%3EÎnainte%3C/text%3E%3C/svg%3E'">
                         <div class="ba-after">
                             <img src="{% static 'img/ba-after.jpg' %}" alt="După tratament"
-                                 onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22300%22%3E%3Crect width=%22400%22 height=%22300%22 fill=%22%23D7E0CD%22/%3E%3Ctext x=%2250%25%22 y=%2252%25%22 text-anchor=%22middle%22 font-family=%22sans-serif%22 font-size=%2222%22 fill=%22%232E4A33%22%3EDupă%3C/text%3E%3C/svg%3E'">
+                                 onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22300%22%3E%3Crect width=%22400%22 height=%22300%22 fill=%22%23E7EDE9%22/%3E%3Ctext x=%2250%25%22 y=%2252%25%22 text-anchor=%22middle%22 font-family=%22sans-serif%22 font-size=%2222%22 fill=%22%2314392E%22%3EDupă%3C/text%3E%3C/svg%3E'">
                         </div>
                         <div class="ba-bar" aria-hidden="true"></div>
                         <input class="ba-range" type="range" min="0" max="100" value="50"
@@ -305,51 +397,8 @@ laudă cu grafice — povestește.
 </section>
 
 
-{# ============================= DESPRE MEDIC ============================= #}
-<section class="band band-oat" id="despre">
-    <div class="wrap doc-in">
-
-        <img class="doc-photo" src="{% static 'img/doctor.jpg' %}"
-             alt="{{ clinic.doctor_name }}" onerror="this.style.visibility='hidden'">
-
-        <div>
-            <h2 class="doc-name">{{ clinic.doctor_name }}</h2>
-            <p class="doc-title">{{ clinic.doctor_role }}</p>
-
-            <p>
-                Am terminat Medicina Dentară la Târgu Mureș și am lucrat patru ani
-                într-o clinică mare, unde un singur pacient trecea prin trei medici
-                pentru o singură lucrare — unul consulta, altul trata, altul vedea
-                rezultatul. Nimeni nu răspundea de tot.
-            </p>
-
-            <p>
-                Am deschis cabinetul din {{ clinic.city }} ca să pot lucra altfel.
-                Aceeași persoană te consultă, îți face tratamentul și te vede la
-                control. Dacă ceva nu iese bine, știi pe cine să cauți.
-            </p>
-
-            <blockquote class="doc-pull">
-                Nu vindem tratamente. Îți spunem ce ai, ce se poate face, cât costă,
-                și decizi tu.
-            </blockquote>
-
-            <p>
-                Lucrez mult cu oameni cărora le e frică. Nu grăbesc pe nimeni, explic
-                fiecare pas înainte să-l fac și mă opresc când cineva ridică mâna. Am
-                pacienți care au venit prima dată după zece ani de amânat — pentru ei
-                merită cel mai mult.
-            </p>
-
-            <a class="btn btn-solid" href="{% url 'booking' %}">Programează o consultație</a>
-        </div>
-
-    </div>
-</section>
-
-
 {# ================================ CONTACT ================================ #}
-<section class="band" id="contact">
+<section class="band band-white" id="contact">
     <div class="wrap">
         <div class="lead-in">
             <h2>Unde ne găsești</h2>

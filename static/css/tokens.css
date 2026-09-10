@@ -1,101 +1,102 @@
 /* =========================================================
    TOKENS
 
-   Paleta pornește de la două materiale reale din cabinet:
-   verdele închis, măsliniu (nu teal — teal-ul e rece) și
-   cremul de ovăz, care are galben în el, nu albastru. Accentul
-   e chihlimbarul lămpii de deasupra scaunului.
+   Registrul e medical, nu artizanal: alb rece, verde
+   instituțional, hairline în loc de umbră, colțuri aproape
+   drepte. Singura formă cu rază mare e silueta din hero —
+   acolo e intenționat, în rest cabinetul trebuie să arate
+   precis, nu prietenos.
 
    Zero gradiente. Culoare plată peste tot.
    ========================================================= */
 
 :root {
-    /* CERNEALĂ — negru cald, cu brun în el, nu gri albăstrui */
-    --ink: #241E17;
-    --ink-soft: #4A4034;
-    --ink-faint: #8C8070;
+    /* CERNEALĂ — negru cu verde în el, ca să nu fie gri de birou */
+    --ink: #12211C;
+    --ink-2: #24352E;
 
-    /* VERDE — măsliniu-pădure, cald */
-    --forest: #2E4A33;
-    --forest-deep: #1C2F20;
-    --forest-pale: #D7E0CD;
-    --forest-mist: #E6EBDD;
+    /* VERDE — instituțional, închis. Purtător de text alb. */
+    --green: #14392E;
+    --green-mid: #2C5648;
+    --green-tint: #E7EDE9;
 
-    /* CREM — ovăz, cu galben în el */
-    --oat: #F4ECDD;
-    --oat-deep: #EADFC9;
-    --oat-line: #DCCFB6;
+    /* SUPRAFEȚE — alb clinic, nu crem */
+    --paper: #F7F8F6;
+    --white: #FFFFFF;
 
-    /* CHIHLIMBAR — lampa. Doar cifre mari și semne mici. */
-    --honey: #9A6B1E;
-    --honey-ink: #7E5416;
-    --honey-lamp: #C99A3F;
+    /* LINII — tot ce ține locul unei umbre */
+    --line: #D9E0DB;
+    --line-strong: #B9C6BE;
+    --line-dark: rgba(255, 255, 255, .18);
 
-    --on-dark: #F4ECDD;
+    /* TEXT SECUNDAR — 5.57:1 pe hârtie, deci se citește chiar și mic */
+    --muted: #5A675F;
+    --muted-dark: #A9BCB2;
 
-    /* STĂRI */
-    --ok-bg: #DCE6D4;
-    --ok-ink: #2B4A2F;
-    --warn-bg: #F2E3C4;
-    --warn-ink: #75551A;
-    --bad-bg: #EFDBD3;
-    --bad-ink: #8A3F27;
+    /* SEMNAL — doar urgență. Nu e culoare de brand. */
+    --signal: #B8452E;
 
-    /* FORME — colțuri mari, moi; medicalul rece are colțuri ascuțite */
-    --r-sm: 8px;
-    --r-md: 14px;
-    --r-lg: 26px;
-    --r-xl: 44px;
+    /* STĂRI (moștenite de dashboard) */
+    --ok-bg: #DCE8E1;
+    --ok-ink: #1D5138;
+    --warn-bg: #F6E7C9;
+    --warn-ink: #6E5111;
+    --bad-bg: #F3DED8;
+    --bad-ink: #8E3421;
+
+    /* FORME — colțuri mici; rotunjimea mare e rezervată hero-ului */
+    --r-xs: 2px;
+    --r-sm: 3px;
+    --r-md: 5px;
+    --r-lg: 8px;
+    --r-shape: 22px;
     --r-pill: 999px;
 
     /* PAGINĂ */
-    --page-max: 1180px;
+    --page-max: 1200px;
     --gutter: 24px;
 
     /* TIPOGRAFIE
-       Petrona: serif umanist, contrast mic, cald.
-       Karla: grotesc umanist, x mare — se citește la 60 de ani. */
-    --serif: "Petrona", Georgia, "Times New Roman", serif;
-    --sans: "Karla", -apple-system, BlinkMacSystemFont, "Segoe UI",
+       Archivo: grotesc cu proporții de semnalistică — genul de literă
+       de pe indicatoarele dintr-un spital. O singură familie, ierarhia
+       o fac greutatea și tracking-ul, nu un al doilea font decorativ. */
+    --sans: "Archivo", -apple-system, BlinkMacSystemFont, "Segoe UI",
             Roboto, Helvetica, Arial, sans-serif;
 
-    /* SPAȚIU */
+    /* SPAȚIU — scară fixă, ca ritmul secțiunilor să nu fie inventat */
     --s1: 4px;  --s2: 8px;  --s3: 12px; --s4: 16px;
-    --s5: 24px; --s6: 32px; --s7: 48px; --s8: 72px; --s9: 104px;
+    --s5: 24px; --s6: 36px; --s7: 56px; --s8: 76px; --s9: 96px;
 
-    /* UMBRE — brun cald, nu gri neutru */
-    --lift: 0 2px 3px rgba(36, 30, 23, .04),
-            0 14px 32px rgba(36, 30, 23, .09);
-    --lift-high: 0 3px 6px rgba(36, 30, 23, .06),
-                 0 26px 56px rgba(36, 30, 23, .14);
+    /* UMBRE — una singură, pentru bara lipită sus. Restul: linii. */
+    --lift: 0 1px 0 var(--line), 0 10px 30px rgba(18, 33, 28, .07);
 
     /* Dashboardul vechi cere aceste nume. Le mapăm ca să nu-l rupem. */
-    --color-primary: var(--forest);
-    --color-primary-dark: var(--forest-deep);
-    --color-primary-soft: var(--forest-pale);
-    --color-accent: var(--honey-lamp);
-    --color-accent-dark: var(--honey);
-    --color-accent-soft: var(--warn-bg);
-    --color-accent-strong: var(--honey-ink);
-    --color-background: var(--oat);
-    --color-surface: #FBF6EC;
-    --color-surface-alt: var(--oat-deep);
+    --color-primary: var(--green);
+    --color-primary-dark: var(--ink);
+    --color-primary-soft: var(--green-tint);
+    --color-accent: var(--green-mid);
+    --color-accent-dark: var(--green);
+    --color-accent-soft: var(--green-tint);
+    --color-accent-strong: var(--green);
+    --color-background: var(--paper);
+    --color-surface: var(--white);
+    --color-surface-alt: var(--green-tint);
     --color-text: var(--ink);
-    --color-text-secondary: var(--ink-soft);
-    --color-text-muted: var(--ink-soft);
-    --color-text-faint: var(--ink-faint);
-    --color-border: var(--oat-line);
-    --color-beige: var(--oat-deep);
+    --color-text-secondary: var(--ink-2);
+    --color-text-muted: var(--muted);
+    --color-text-faint: var(--muted);
+    --color-border: var(--line);
+    --color-beige: var(--green-tint);
     --color-success: var(--ok-bg);
     --color-success-text: var(--ok-ink);
     --color-warning: var(--warn-bg);
     --color-warning-text: var(--warn-ink);
     --color-danger: var(--bad-bg);
     --color-danger-text: var(--bad-ink);
-    --color-navigation-background: var(--oat-deep);
-    --color-badge-background: var(--oat-deep);
-    --color-input-background: #FBF6EC;
-    --color-on-primary: var(--on-dark);
+    --color-navigation-background: var(--green-tint);
+    --color-badge-background: var(--green-tint);
+    --color-input-background: var(--white);
+    --color-on-primary: var(--white);
     --radius-small: var(--r-sm);
     --radius-medium: var(--r-md);
     --radius-large: var(--r-lg);
@@ -125,8 +126,8 @@ body {
     margin: 0;
     font-family: var(--sans);
     font-size: 17px;
-    line-height: 1.62;
-    background: var(--oat);
+    line-height: 1.6;
+    background: var(--paper);
     color: var(--ink);
     -webkit-font-smoothing: antialiased;
 }
@@ -135,11 +136,13 @@ img, svg, video { display: block; max-width: 100%; }
 
 button, input, select, textarea { font: inherit; color: inherit; }
 
+/* Titlurile stau strâns. Tracking negativ la corp mare — altfel un
+   grotesc la 56px pare rărit și își pierde autoritatea. */
 h1, h2, h3, h4 {
-    font-family: var(--serif);
+    font-family: var(--sans);
     font-weight: 600;
-    line-height: 1.12;
-    letter-spacing: -.01em;
+    line-height: 1.1;
+    letter-spacing: -.022em;
     margin: 0 0 var(--s4);
 }
 
@@ -147,7 +150,7 @@ p { margin: 0 0 var(--s4); }
 a { color: inherit; }
 
 :focus-visible {
-    outline: 3px solid var(--honey);
+    outline: 2px solid var(--green);
     outline-offset: 3px;
-    border-radius: var(--r-sm);
+    border-radius: var(--r-xs);
 }

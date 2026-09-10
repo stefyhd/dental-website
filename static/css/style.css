@@ -1,608 +1,889 @@
 /* =========================================================
-   SITE PUBLIC — Cabinet Dr. Hodoș
-   Tokenii vin din tokens.css.
+   SITE PUBLIC
+
+   Regula de bază a foii ăsteia: separatorul implicit e o
+   linie de 1px, nu o umbră și nu un card rotunjit. Un cabinet
+   se uită a instituție când marginile sunt drepte și grila e
+   respectată, nu când totul plutește.
+
+   Ordinea: bază → butoane → bară urgență → navbar → hero →
+   bară de fapte → prima vizită → medic → servicii →
+   standarde → înainte/după → contact → footer → mobil.
    ========================================================= */
+
+
+/* ============================ BAZĂ ============================ */
+
+.skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    z-index: 100;
+    background: var(--green);
+    color: var(--white);
+    padding: var(--s3) var(--s5);
+    text-decoration: none;
+}
+.skip-link:focus { left: 0; }
 
 .wrap {
     width: 100%;
     max-width: var(--page-max);
-    margin: 0 auto;
-    padding: 0 var(--gutter);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
 }
 
-.band { padding: var(--s9) 0; }
-.band-tight { padding: var(--s8) 0; }
-.band-forest { background: var(--forest-deep); color: var(--on-dark); }
-.band-oat { background: var(--oat-deep); }
+/* Ritmul secțiunilor. O singură scară, ca să nu mai pară haotic. */
+.band       { padding-block: var(--s9); }
+.band-tight { padding-block: var(--s8); }
 
-.lead-in { max-width: 34rem; margin-bottom: var(--s7); }
+/* Bara de sus e lipită; fără asta, ancorele (#despre, #servicii)
+   duc titlul exact sub navbar. */
+section[id] { scroll-margin-top: 90px; }
 
+.band-white               { background: var(--white); }
+.band-tint, .band-oat     { background: var(--green-tint); }
+
+.band-green, .band-forest {
+    background: var(--green);
+    color: var(--white);
+}
+.band-green a, .band-forest a { color: var(--white); }
+
+/* Capul de secțiune. Titlu + o singură frază care spune la ce
+   folosește secțiunea. Fără etichete cu majuscule deasupra. */
+.lead-in {
+    max-width: 46ch;
+    margin-bottom: var(--s7);
+}
 .lead-in h2 {
-    font-size: clamp(1.85rem, 3.7vw, 2.7rem);
-    margin-bottom: var(--s3);
+    font-size: clamp(28px, 3.4vw, 40px);
+    font-weight: 600;
 }
-
 .lead-in p {
-    color: var(--ink-soft);
     margin: 0;
+    color: var(--muted);
+    font-size: 17px;
 }
-
-.band-forest .lead-in p { color: rgba(244, 236, 221, .78); }
-
-.sr-only {
-    position: absolute; width: 1px; height: 1px;
-    padding: 0; margin: -1px; overflow: hidden;
-    clip: rect(0 0 0 0); white-space: nowrap; border: 0;
-}
-
-.skip-link {
-    position: absolute; left: var(--s4); top: -100px; z-index: 300;
-    background: var(--forest); color: var(--on-dark);
-    padding: var(--s3) var(--s5);
-    border-radius: var(--r-md); text-decoration: none;
-    transition: top .2s;
-}
-.skip-link:focus { top: var(--s4); }
+.band-green .lead-in p, .band-forest .lead-in p { color: var(--muted-dark); }
 
 
-/* ---------------- Butoane ---------------- */
+/* =========================== BUTOANE =========================== */
 
 .btn {
-    display: inline-flex; align-items: center; justify-content: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     gap: var(--s2);
-    padding: 15px 30px;
-    border: 1.5px solid transparent;
-    border-radius: var(--r-pill);
-    font-family: var(--sans);
-    font-size: .93rem; font-weight: 700;
-    letter-spacing: .04em;
-    text-decoration: none; cursor: pointer;
-    transition: background .18s, color .18s, border-color .18s;
+    padding: 13px 24px;
+    border: 1px solid transparent;
+    border-radius: var(--r-sm);
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -.005em;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color .16s ease, border-color .16s ease, color .16s ease;
 }
 
-.btn-solid { background: var(--forest); color: var(--on-dark); }
-.btn-solid:hover { background: var(--forest-deep); }
+.btn-solid {
+    background: var(--green);
+    color: var(--white);
+    border-color: var(--green);
+}
+.btn-solid:hover { background: var(--ink); border-color: var(--ink); }
 
-.btn-line { background: transparent; color: var(--forest); border-color: var(--forest); }
-.btn-line:hover { background: var(--forest); color: var(--on-dark); }
+.btn-line {
+    background: transparent;
+    color: var(--green);
+    border-color: var(--line-strong);
+}
+.btn-line:hover { border-color: var(--green); background: var(--white); }
 
-.band-forest .btn-line { color: var(--on-dark); border-color: rgba(244,236,221,.42); }
-.band-forest .btn-line:hover { background: var(--on-dark); color: var(--forest-deep); }
+.band-green .btn-line, .band-forest .btn-line {
+    color: var(--white);
+    border-color: var(--line-dark);
+}
+.band-green .btn-line:hover, .band-forest .btn-line:hover {
+    background: transparent;
+    border-color: var(--white);
+}
 
-.btn-lg { padding: 17px 36px; font-size: .97rem; }
+.btn-lg { padding: 17px 34px; font-size: 16px; }
 
 
-/* ---------------- Bara de urgență ---------------- */
+/* ======================== BARĂ DE URGENȚĂ ======================== */
+/* Prima linie a paginii. Omul cu durere sună, nu citește. */
 
 .urgency {
-    background: var(--forest-deep);
-    color: var(--on-dark);
-    font-size: .85rem;
+    background: var(--ink);
+    color: var(--white);
+    font-size: 13.5px;
 }
-
 .urgency-in {
-    display: flex; align-items: center; justify-content: space-between;
-    gap: var(--s4); min-height: 44px;
-    padding-top: var(--s2); padding-bottom: var(--s2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s4);
+    min-height: 40px;
 }
-
-.urgency-hours { display: flex; align-items: center; gap: var(--s2); opacity: .82; }
+.urgency-hours {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s2);
+    color: #C6D4CC;
+}
+.dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: #6FCF97;
+}
+.dot-off { background: #9AA8A1; }
 
 .urgency-call {
-    display: inline-flex; align-items: center; gap: var(--s2);
-    font-weight: 700; text-decoration: none; white-space: nowrap;
-    color: var(--honey-lamp);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s2);
+    color: var(--white);
+    font-weight: 600;
+    text-decoration: none;
 }
+.urgency-call svg { color: var(--signal); }
 .urgency-call:hover { text-decoration: underline; }
 
-.dot { width: 7px; height: 7px; border-radius: 50%; background: var(--honey-lamp); flex-shrink: 0; }
-.dot-off { background: var(--ink-faint); }
 
+/* ============================ NAVBAR ============================ */
+/* Două stări, aceeași bară: albă tot timpul, cu umbră abia după
+   ce pleci de pe hero. Nimic care să sară. */
 
-/* ---------------- Navbar ---------------- */
-
-.nav-probe { position: absolute; top: 0; width: 1px; height: 1px; }
-
-.topnav { position: sticky; top: 0; z-index: 200; padding: var(--s4) 0; transition: padding .25s; }
+.topnav {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: var(--white);
+    border-bottom: 1px solid var(--line);
+    transition: box-shadow .18s ease;
+}
+.topnav.pinned { box-shadow: var(--lift); }
 
 .topnav-in {
-    display: flex; align-items: center; gap: var(--s5);
-    padding: 9px 9px 9px var(--s5);
-    border: 1.5px solid transparent;
-    border-radius: var(--r-pill);
-    transition: background .25s, border-color .25s, box-shadow .25s;
-}
-
-.topnav.pinned { padding: var(--s3) 0; }
-.topnav.pinned .topnav-in {
-    background: var(--oat);
-    border-color: var(--oat-line);
-    box-shadow: var(--lift);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s5);
+    min-height: 68px;
 }
 
 .brand {
-    display: flex; align-items: center; gap: var(--s2);
-    font-family: var(--serif); font-size: 1.12rem; font-weight: 600;
-    color: var(--forest); text-decoration: none; white-space: nowrap;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -.02em;
+    color: var(--ink);
+    text-decoration: none;
 }
-.brand img { height: 40px; width: auto; }
 
-.navlinks { display: flex; align-items: center; gap: var(--s6); margin-left: auto; }
-
-/* :not(.btn) — altfel regula asta bate .btn-solid și înghite textul butonului */
+.navlinks {
+    display: flex;
+    align-items: center;
+    gap: var(--s6);
+}
+/* `display:flex` de mai sus bate `[hidden]{display:none}` din browser.
+   Fără linia asta, meniul de mobil e deschis la încărcarea paginii. */
+.navlinks[hidden] { display: none; }
+/* :not(.btn) — altfel selectorul ăsta bate .btn-solid pe CTA. */
 .navlinks a:not(.btn) {
-    font-size: .95rem; font-weight: 500;
-    color: var(--ink-soft); text-decoration: none;
-    padding: 4px 0;
-    border-bottom: 1.5px solid transparent;
-    transition: color .18s, border-color .18s;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--ink-2);
+    text-decoration: none;
+    padding-block: 4px;
+    border-bottom: 2px solid transparent;
 }
-.navlinks a:not(.btn):hover { color: var(--forest); border-bottom-color: var(--forest); }
-
-.nav-cta { margin-left: var(--s4); }
+.navlinks a:not(.btn):hover {
+    color: var(--ink);
+    border-bottom-color: var(--green);
+}
+.nav-cta { padding: 11px 20px; }
 
 .burger {
-    display: none; margin-left: auto;
-    width: 48px; height: 48px;
-    align-items: center; justify-content: center;
-    background: var(--oat); border: 1.5px solid var(--oat-line);
-    border-radius: var(--r-pill); cursor: pointer;
+    display: none;
+    width: 42px; height: 42px;
+    padding: 0;
+    background: none;
+    border: 1px solid var(--line);
+    border-radius: var(--r-sm);
+    cursor: pointer;
 }
-.burger span, .burger span::before, .burger span::after {
-    display: block; width: 19px; height: 2px; border-radius: 2px;
-    background: var(--forest); transition: transform .22s, opacity .22s;
+.burger span,
+.burger span::before,
+.burger span::after {
+    display: block;
+    width: 18px; height: 2px;
+    margin-inline: auto;
+    background: var(--ink);
+    content: "";
 }
-.burger span::before, .burger span::after { content: ""; position: relative; }
-.burger span::before { top: -6px; }
-.burger span::after { top: 4px; }
-.burger[aria-expanded="true"] span { background: transparent; }
-.burger[aria-expanded="true"] span::before { transform: translateY(6px) rotate(45deg); }
-.burger[aria-expanded="true"] span::after { transform: translateY(-6px) rotate(-45deg); }
+.burger span::before { transform: translateY(-6px); }
+.burger span::after  { transform: translateY(4px); }
 
 
-/* =========================================================
-   HERO
-   ========================================================= */
+/* ============================= HERO ============================= */
 
-.hero { padding: var(--s6) 0 var(--s8); }
+.hero {
+    background: var(--white);
+    padding-block: var(--s8);
+    overflow: hidden;
+}
 
+/* Coloanele pornesc de la aceeași linie de sus. `center` le
+   dezaliniază vizibil când textul și forma au înălțimi diferite. */
 .hero-in {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.02fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 520px);
     gap: var(--s8);
-    align-items: center;
+    align-items: start;
 }
 
-.hero-mark { height: 74px; width: auto; margin-bottom: var(--s6); }
-
 .hero h1 {
-    font-size: clamp(2.5rem, 5.4vw, 4.05rem);
+    max-width: 15ch;
+    margin: 0 0 var(--s5);
+    font-size: clamp(38px, 5.4vw, 62px);
+    font-weight: 600;
     line-height: 1.04;
-    margin-bottom: var(--s5);
-    max-width: 13ch;
+    letter-spacing: -.032em;
 }
 
 .hero-copy {
-    font-size: 1.09rem;
-    color: var(--ink-soft);
-    max-width: 40ch;
-    margin-bottom: var(--s7);
+    max-width: 46ch;
+    margin: 0 0 var(--s6);
+    font-size: 18.5px;
+    line-height: 1.62;
+    color: var(--ink-2);
 }
 
-.hero-do { display: flex; flex-wrap: wrap; gap: var(--s3); }
+.hero-do {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--s4);
+}
+
+/* Scurtături: apel, WhatsApp, email. Pătrate, nu cercuri —
+   cercurile trag imediat spre „prietenos". */
+.shortcuts {
+    display: flex;
+    gap: var(--s2);
+}
+.shortcut {
+    display: grid;
+    place-items: center;
+    width: 52px; height: 52px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-sm);
+    color: var(--green);
+    transition: border-color .16s ease, color .16s ease;
+}
+.shortcut:hover { border-color: var(--green); color: var(--ink); }
+.shortcut svg { width: 19px; height: 19px; }
 
 
-/* --- Scena: formă + scurtături + pastila Servicii --- */
+/* ---- Forma din hero ---- */
 
 .stage { position: relative; }
 
 .shape {
     position: relative;
-    aspect-ratio: 100 / 104;
-    background: var(--forest-mist);
-    border-radius: var(--r-xl);
-    /* Clipmask real: dintele și semnele „+" din interior sunt tăiate
-       de silueta formei, nu doar acoperite de ea. */
+    aspect-ratio: 1 / 1.02;
+    background: var(--green);
+    border-radius: var(--r-shape);
     clip-path: url(#shapeMask);
     overflow: hidden;
 }
 
-/* Scurtăturile agățate pe muchia din stânga a blocului înalt */
-.shortcuts {
-    position: absolute;
-    left: calc(30% - 27px); top: 3.5%;
-    display: grid; gap: var(--s3);
-    z-index: 3;
-}
-
-.shortcut {
-    width: 52px; height: 52px;
-    display: grid; place-items: center;
-    border-radius: 50%;
-    background: var(--forest-pale);
-    color: var(--forest-deep);
-    text-decoration: none;
-    box-shadow: var(--lift);
-    transition: background .18s, color .18s, transform .18s;
-}
-.shortcut:hover { background: var(--forest); color: var(--on-dark); transform: translateY(-2px); }
-.shortcut svg { width: 21px; height: 21px; }
-
-/* Pastila stă în crestătura de jos-dreapta deschisă de mască. */
-.shape-cta {
-    position: absolute;
-    right: 0; bottom: 4%; z-index: 3;
-}
-
-
-/* --- Dintele 3D --- */
-
 .tooth-stage {
-    position: absolute; inset: 4% 4% 20% 24%;
-    display: grid; place-items: center;
-    perspective: 1100px;
+    position: absolute;
+    inset: 13% 26% 19% 26%;
+    display: grid;
+    place-items: center;
+    perspective: 900px;
 }
+.tooth-flat { width: 100%; height: auto; }
 
+/* Extrudare în straturi: N copii ale siluetei pe axa Z. Nu e
+   un model 3D, dar parallaxul dintre straturi citește ca volum
+   și cântărește cât un SVG. */
 .tooth-3d {
     position: relative;
-    width: 40%;
-    aspect-ratio: 200 / 250;
+    width: 100%;
     transform-style: preserve-3d;
-    animation: spin 26s linear infinite;
+    transform: rotateX(8deg) rotateY(-17deg);
 }
-
 .tooth-3d svg {
-    position: absolute; inset: 0;
-    width: 100%; height: 100%;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
 }
+.tooth-3d svg:first-child { position: relative; }
 
-@keyframes spin {
-    from { transform: rotateX(-8deg) rotateY(0deg); }
-    to   { transform: rotateX(-8deg) rotateY(360deg); }
-}
+/* ---- Semnele „+" cu beneficiu ---- */
 
-/* Fără JS sau la mișcare redusă rămâne silueta plată — tot arată bine. */
-.tooth-flat { width: 40%; }
-
-/* Semnele „+". Cele din interior sunt tăiate de mască. */
 .plus {
     position: absolute;
-    font-family: var(--sans); font-weight: 400;
-    line-height: 1; color: var(--forest);
-    opacity: .5;
-    user-select: none; pointer-events: none;
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+    max-width: 132px;
+    color: var(--white);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.35;
+    letter-spacing: -.005em;
+    opacity: 0;
+    animation: plus-in .7s ease forwards;
 }
-.plus-lg { font-size: 34px; }
-.plus-md { font-size: 23px; }
-.plus-sm { font-size: 15px; }
-
-.plus-in { z-index: 2; animation: twinkle 5.5s ease-in-out infinite; }
-@keyframes twinkle {
-    0%, 100% { opacity: .26; }
-    50%      { opacity: .62; }
+.plus i {
+    flex: none;
+    font-style: normal;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.15;
+    opacity: .7;
 }
 
-.p1 { top: 8%;   left: 38%; }  .p2 { top: 17%;  right: 9%; }
-.p3 { top: 44%;  left: 10%; }  .p4 { bottom: 9%;  left: 30%; }
-.p5 { top: 60%;  right: 26%; } .p6 { bottom: 22%; left: 6%; }
+@keyframes plus-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: none; }
+}
 
-/* Cele din afara formei stau peste fundal, la marginea scenei */
-.plus-out { z-index: 1; opacity: .3; }
-.o1 { top: 6%; left: 8%; } .o2 { bottom: 2%; right: 14%; }
+.p1 { top: 27%; left: 6%; }
+.p2 { top: 43%; right: 6%; }
+.p3 { top: 65%; left: 6%; }
+
+/* Pastila „Servicii" stă în scobitura din colțul de jos-dreapta al
+   siluetei — de aia are masca treapta aia. Zona e albă, deci pastila
+   e verde: pe verde ar dispărea în fundal.
+   Lățimea trebuie să rămână sub 22%, cât ține scobitura din mască. */
+.shape-cta {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 21%;
+    height: 20%;
+    display: grid;
+    place-items: center;
+}
+.shape-cta .btn {
+    width: 100%;
+    padding: 15px 10px;
+    border-radius: var(--r-pill);
+}
 
 
-/* =========================================================
-   PRIMA VIZITĂ — chiar e o secvență, deci numerele sunt justificate
-   ========================================================= */
+/* ========================= BARĂ DE FAPTE ========================= */
+/* Ce caută omul în primele 5 secunde: e deschis? unde e? ce număr? */
 
-.visit { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
+.factbar {
+    background: var(--white);
+    border-block: 1px solid var(--line);
+}
+.factbar-in {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+}
+.fact-cell {
+    padding: var(--s5) var(--s5) var(--s5) var(--s5);
+    border-left: 1px solid var(--line);
+}
+.fact-cell:first-child { border-left: 0; padding-left: 0; }
 
-.visit-step { padding: var(--s6) var(--s5) var(--s6) 0; border-top: 2px solid var(--forest); }
-.visit-step + .visit-step { padding-left: var(--s5); }
+.fact-k {
+    margin: 0 0 4px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+}
+.fact-v {
+    display: block;
+    margin: 0;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--ink);
+    text-decoration: none;
+    letter-spacing: -.015em;
+}
+a.fact-v:hover { color: var(--green); text-decoration: underline; }
+.fact-note {
+    margin: 2px 0 0;
+    font-size: 13.5px;
+    color: var(--muted);
+}
+
+
+/* ========================== PRIMA VIZITĂ ========================== */
+/* Numerotate pentru că e chiar o secvență, nu decor. */
+
+.visit {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border-top: 1px solid var(--line);
+}
+.visit-step {
+    padding: var(--s6) var(--s6) 0 var(--s6);
+    border-left: 1px solid var(--line);
+}
+.visit-step:first-child { border-left: 0; padding-left: 0; }
+.visit-step:last-child  { padding-right: 0; }
 
 .visit-n {
-    font-family: var(--serif); font-size: 1.05rem; font-weight: 600;
-    color: var(--honey-ink); margin-bottom: var(--s3);
+    margin: 0 0 var(--s4);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--green);
+    font-variant-numeric: tabular-nums;
 }
-.visit-step h3 { font-size: 1.22rem; margin-bottom: var(--s2); }
-.visit-step p { color: var(--ink-soft); font-size: .97rem; margin: 0; }
-
-
-/* =========================================================
-   STATISTICI — proză, nu carduri. Cifrele stau în frază.
-   ========================================================= */
-
-.figures { max-width: 46rem; }
-
-.figures p {
-    font-family: var(--serif);
-    font-size: clamp(1.35rem, 2.5vw, 1.85rem);
-    line-height: 1.5;
-    color: var(--ink);
-    margin-bottom: var(--s5);
+.visit-step h3 {
+    margin: 0 0 var(--s3);
+    font-size: 21px;
+    font-weight: 600;
 }
-
-.band-forest .figures p { color: var(--on-dark); }
-
-.fig {
-    font-style: normal; font-weight: 600;
-    font-size: 1.65em; line-height: .8;
-    color: var(--honey-lamp);
-    letter-spacing: -.02em;
-}
-
-/* Selectorul trebuie să bată `.figures p`, altfel nota moștenește
-   serif-ul mare al frazelor de deasupra. */
-.figures p.figures-note {
-    font-family: var(--sans);
-    font-size: .95rem;
-    color: rgba(244, 236, 221, .74);
-    max-width: 44ch;
+.visit-step p {
     margin: 0;
+    color: var(--muted);
+    font-size: 16px;
+}
+.band-green .visit,
+.band-forest .visit { border-top-color: var(--line-dark); }
+.band-green .visit-step,
+.band-forest .visit-step { border-left-color: var(--line-dark); }
+.band-green .visit-n,
+.band-forest .visit-n { color: var(--white); }
+.band-green .visit-step p,
+.band-forest .visit-step p { color: var(--muted-dark); }
+
+
+/* ============================= MEDIC ============================= */
+/* Mutat sus, imediat după prima vizită: încrederea într-un cabinet
+   cu un singur medic e încrederea în medicul ăla. */
+
+.doc-in {
+    display: grid;
+    grid-template-columns: minmax(0, 380px) minmax(0, 1fr);
+    gap: var(--s8);
+    align-items: start;
+}
+.doc-shot {
+    aspect-ratio: 4 / 5;
+    background: var(--green-tint);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    overflow: hidden;
+}
+.doc-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
+.doc-name {
+    margin: 0 0 2px;
+    font-size: clamp(28px, 3.2vw, 38px);
+    font-weight: 600;
+}
+.doc-title {
+    margin: 0 0 var(--s6);
+    color: var(--muted);
+    font-size: 16px;
+}
+.doc-in p { max-width: 62ch; }
 
-/* =========================================================
-   SERVICII — pe homepage doar cele alese de medic
-   ========================================================= */
+.doc-pull {
+    margin: var(--s6) 0;
+    padding-left: var(--s5);
+    border-left: 2px solid var(--green);
+    font-size: 19px;
+    font-weight: 500;
+    line-height: 1.45;
+    letter-spacing: -.015em;
+    color: var(--ink);
+}
 
-.svc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: var(--s4); }
+/* Acreditările. Astea fac diferența dintre „un medic tânăr" și
+   „un medic care știe ce face" — dar numai dacă sunt verificabile. */
+.creds {
+    margin: var(--s6) 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--line);
+    max-width: 62ch;
+}
+.creds li {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--s5);
+    padding: var(--s3) 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 15.5px;
+}
+.creds span { color: var(--muted); flex: none; }
 
+
+/* ============================ SERVICII ============================ */
+/* Grilă de 3 pe rând, toate categoriile active. Fiecare card spune
+   ce intră în categorie — „4 servicii" nu ajută pe nimeni. */
+
+.svc-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+}
 .svc {
-    display: flex; flex-direction: column;
+    display: flex;
+    flex-direction: column;
+    gap: var(--s3);
     padding: var(--s6);
-    background: var(--oat-deep);
-    border-radius: var(--r-lg);
-    text-decoration: none; color: inherit;
-    transition: background .2s, color .2s;
+    background: var(--white);
+    text-decoration: none;
+    transition: background-color .16s ease;
 }
-.svc:hover { background: var(--forest); color: var(--on-dark); }
+.svc:hover { background: var(--green-tint); }
 
-.svc-name { font-family: var(--serif); font-size: 1.3rem; font-weight: 600; margin-bottom: var(--s2); }
-.svc-note { font-size: .94rem; color: var(--ink-soft); margin: 0 0 var(--s5); }
-.svc:hover .svc-note { color: rgba(244, 236, 221, .8); }
-.svc-from { margin-top: auto; font-size: .88rem; font-weight: 700; letter-spacing: .04em; }
+.svc-name {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -.02em;
+    color: var(--ink);
+}
+.svc-list {
+    margin: 0;
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.55;
+}
+.svc-from {
+    margin-top: auto;
+    padding-top: var(--s4);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--green);
+}
 
 .svc-all { margin-top: var(--s6); }
 
 
-/* =========================================================
-   GARANȚII — în locul recenziilor. Listă cu linii, nu carduri.
-   ========================================================= */
+/* =========================== STANDARDE =========================== */
+/* Rânduri cu linie, nu carduri. Un tabel de proceduri arată a
+   protocol; șase carduri rotunjite arată a landing page. */
 
-.assure { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0 var(--s8); }
+.std { border-top: 1px solid var(--line-dark); }
 
-.assure-item { padding: var(--s5) 0; border-bottom: 1px solid rgba(244, 236, 221, .2); }
-
-.assure-item h3 {
-    font-family: var(--sans); font-size: 1rem; font-weight: 700;
-    letter-spacing: .02em; margin-bottom: var(--s2);
-    color: var(--honey-lamp);
+.std-row {
+    display: grid;
+    grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
+    gap: var(--s6);
+    padding: var(--s5) 0;
+    border-bottom: 1px solid var(--line-dark);
 }
-.assure-item p { font-size: .96rem; color: rgba(244, 236, 221, .8); margin: 0; }
+.std-row h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+.std-row p {
+    margin: 0;
+    color: var(--muted-dark);
+    font-size: 16px;
+    max-width: 62ch;
+}
 
 
-/* =========================================================
-   ÎNAINTE / DUPĂ — trei, pe același grid
-   ========================================================= */
+/* ========================= ÎNAINTE / DUPĂ ========================= */
 
-.ba-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s5); }
-
+.ba-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--s5);
+}
 .ba {
     position: relative;
-    border-radius: var(--r-lg);
+    aspect-ratio: 4 / 3;
+    border-radius: var(--r-md);
     overflow: hidden;
-    background: var(--oat-deep);
-    user-select: none; touch-action: pan-y;
+    background: var(--green-tint);
 }
-
-.ba img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; pointer-events: none; }
-
-.ba-after { position: absolute; inset: 0; clip-path: inset(0 0 0 var(--pos, 50%)); }
+.ba img {
+    position: absolute;
+    inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+}
+.ba-after {
+    position: absolute;
+    inset: 0;
+    width: var(--pos);
+    overflow: hidden;
+}
+.ba-after img { width: auto; min-width: 100%; }
 
 .ba-bar {
-    position: absolute; top: 0; bottom: 0; left: var(--pos, 50%);
-    width: 2px; background: var(--oat);
-    transform: translateX(-1px); pointer-events: none;
+    position: absolute;
+    top: 0; bottom: 0;
+    left: var(--pos);
+    width: 2px;
+    background: var(--white);
+    /* Conturul ține linia vizibilă și pe o poză deschisă la culoare. */
+    box-shadow: 0 0 0 1px rgba(18, 33, 28, .3);
+    transform: translateX(-1px);
+    pointer-events: none;
 }
-.ba-bar::after {
-    content: ""; position: absolute; top: 50%; left: 50%;
-    width: 34px; height: 34px; transform: translate(-50%, -50%);
-    border-radius: 50%; background: var(--oat); box-shadow: var(--lift);
+.ba-range {
+    position: absolute;
+    inset: 0;
+    width: 100%; height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: ew-resize;
 }
-
-.ba-range { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: ew-resize; }
-
-.ba-caption { padding: var(--s3) var(--s1) 0; font-size: .9rem; color: var(--ink-soft); }
-
-
-/* =========================================================
-   DESPRE MEDIC
-   ========================================================= */
-
-.doc-in { display: grid; grid-template-columns: minmax(0, 360px) minmax(0, 1fr); gap: var(--s8); align-items: start; }
-
-.doc-photo {
-    width: 100%; aspect-ratio: 4 / 5; object-fit: cover;
-    border-radius: var(--r-lg) var(--r-lg) var(--r-xl) var(--r-lg);
-    background: var(--forest-pale);
-}
-
-.doc-name { font-size: clamp(1.7rem, 3.4vw, 2.35rem); margin-bottom: var(--s2); }
-.doc-title { font-size: .95rem; font-weight: 700; color: var(--honey-ink); margin-bottom: var(--s5); }
-.doc-in p { color: var(--ink-soft); max-width: 54ch; }
-
-.doc-pull {
-    font-family: var(--serif); font-size: 1.3rem; line-height: 1.45;
-    color: var(--ink); border-left: 2px solid var(--forest);
-    padding-left: var(--s5); margin: var(--s6) 0;
-    max-width: 44ch;
+.ba-caption {
+    margin: var(--s3) 0 0;
+    font-size: 14px;
+    color: var(--muted);
 }
 
 
-/* =========================================================
-   CONTACT
-   ========================================================= */
+/* ============================ CONTACT ============================ */
 
-.contact-in { display: grid; grid-template-columns: minmax(0, 370px) minmax(0, 1fr); gap: var(--s7); align-items: start; }
+.contact-in {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    gap: var(--s8);
+    align-items: start;
+}
 
-.facts { display: grid; gap: var(--s5); margin: 0 0 var(--s6); }
-.fact-k { font-size: .82rem; font-weight: 700; color: var(--ink-faint); margin-bottom: 2px; }
-.fact-v { font-size: 1.06rem; text-decoration: none; }
-a.fact-v:hover { color: var(--forest); }
+.facts {
+    margin: 0 0 var(--s6);
+    border-top: 1px solid var(--line);
+}
+.facts > div {
+    display: grid;
+    grid-template-columns: 110px minmax(0, 1fr);
+    gap: var(--s4);
+    padding: var(--s3) 0;
+    border-bottom: 1px solid var(--line);
+}
+.facts dt, .facts dd { margin: 0; }
+.facts .fact-v { font-size: 16px; }
 
-.hours { width: 100%; border-collapse: collapse; font-size: .97rem; }
-.hours th { text-align: left; font-weight: 400; color: var(--ink-soft); padding: 8px 0; }
-.hours td { text-align: right; padding: 8px 0; }
-.hours tr + tr th, .hours tr + tr td { border-top: 1px solid var(--oat-line); }
-.hours .now th, .hours .now td { font-weight: 700; color: var(--forest); }
+.hours {
+    width: 100%;
+    margin-top: var(--s3);
+    border-collapse: collapse;
+    font-size: 15.5px;
+}
+.hours th, .hours td {
+    padding: 9px 0;
+    text-align: left;
+    font-weight: 400;
+    border-bottom: 1px solid var(--line);
+}
+.hours td { text-align: right; font-variant-numeric: tabular-nums; }
+.hours tr.now th, .hours tr.now td { font-weight: 700; color: var(--green); }
 
-/* Harta nu contactează Google până la click. */
 .map {
-    position: relative; border-radius: var(--r-lg); overflow: hidden;
-    background: var(--oat-deep); aspect-ratio: 16 / 11;
+    position: relative;
+    aspect-ratio: 4 / 3;
+    background: var(--green-tint);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    overflow: hidden;
 }
-.map iframe { width: 100%; height: 100%; border: 0; display: block; }
-
+.map iframe { width: 100%; height: 100%; border: 0; }
 .map-ask {
-    position: absolute; inset: 0;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: var(--s3); padding: var(--s6); text-align: center;
-    background: var(--oat-deep); border: 0; cursor: pointer;
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: var(--s3);
+    padding: var(--s6);
+    background: none;
+    border: 0;
+    cursor: pointer;
+    text-align: center;
 }
-.map-ask small { color: var(--ink-soft); max-width: 34ch; font-size: .85rem; }
+.map-ask small {
+    max-width: 34ch;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.5;
+}
+.map-go {
+    display: flex;
+    gap: var(--s3);
+    margin-top: var(--s4);
+}
 
-.map-go { display: flex; flex-wrap: wrap; gap: var(--s3); margin-top: var(--s4); }
 
+/* ============================= FOOTER ============================= */
 
-/* =========================================================
-   FOOTER
-   ========================================================= */
+.foot {
+    background: var(--ink);
+    color: #C6D4CC;
+    padding-block: var(--s8) var(--s6);
+    font-size: 15px;
+}
+.foot-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) repeat(2, minmax(0, 1fr));
+    gap: var(--s7);
+    padding-bottom: var(--s7);
+    border-bottom: 1px solid var(--line-dark);
+}
+.foot-brand {
+    margin: 0 0 var(--s2);
+    color: var(--white);
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -.02em;
+}
+.foot h4 {
+    margin: 0 0 var(--s3);
+    color: var(--white);
+    font-size: 14px;
+    font-weight: 600;
+}
+.foot ul { margin: 0; padding: 0; list-style: none; }
+.foot li { margin-bottom: 7px; }
+.foot a { text-decoration: none; }
+.foot a:hover { color: var(--white); text-decoration: underline; }
 
-.foot { background: var(--forest-deep); color: rgba(244, 236, 221, .8); padding: var(--s8) 0 var(--s6); font-size: .95rem; }
-.foot-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: var(--s7); margin-bottom: var(--s7); }
-.foot h4 { font-family: var(--sans); font-size: .84rem; font-weight: 700; color: var(--honey-lamp); margin-bottom: var(--s4); }
-.foot-brand { font-family: var(--serif); font-size: 1.3rem; color: var(--on-dark); margin-bottom: var(--s3); }
-.foot ul { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--s2); }
-.foot a { color: rgba(244, 236, 221, .8); text-decoration: none; }
-.foot a:hover { color: var(--on-dark); text-decoration: underline; }
 .foot-end {
-    display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--s3);
-    padding-top: var(--s5); border-top: 1px solid rgba(244, 236, 221, .16);
-    font-size: .86rem; color: rgba(244, 236, 221, .58);
+    display: flex;
+    justify-content: space-between;
+    gap: var(--s4);
+    padding-top: var(--s5);
+    font-size: 13.5px;
+    color: #8FA298;
 }
 
 
-/* =========================================================
-   PAGINI INTERIOARE
-   ========================================================= */
+/* ==================== PAGINA SERVICII (listă) ==================== */
 
-.phead { padding: var(--s8) 0 var(--s6); }
-.phead h1 { font-size: clamp(2.1rem, 4.6vw, 3.2rem); margin-bottom: var(--s3); max-width: 18ch; }
-.phead p { color: var(--ink-soft); max-width: 46ch; margin: 0; }
+/* Capul paginii. `max-width` merge pe paragraf, nu pe secțiune —
+   pusă pe secțiune, strânge și `.wrap` și strică centrarea grilei. */
+.phead { padding-block: var(--s8) 0; }
+.phead h1 {
+    margin: 0 0 var(--s4);
+    font-size: clamp(34px, 4.4vw, 48px);
+    letter-spacing: -.028em;
+}
+.phead p {
+    max-width: 52ch;
+    margin: 0;
+    color: var(--muted);
+    font-size: 17.5px;
+}
 
-/* Lista de servicii pe categorii — simplă, de scanat */
-.cat + .cat { margin-top: var(--s8); }
-
+.cat { margin-bottom: var(--s8); scroll-margin-top: 90px; }
 .cat-head {
-    display: flex; align-items: baseline; gap: var(--s4);
-    padding-bottom: var(--s3); margin-bottom: var(--s2);
-    border-bottom: 2px solid var(--forest);
+    padding-bottom: var(--s4);
+    border-bottom: 2px solid var(--green);
 }
-.cat-head h2 { font-size: 1.55rem; margin: 0; }
-.cat-head p { font-size: .93rem; color: var(--ink-soft); margin: 0; }
+.cat-head h2 { margin: 0 0 5px; font-size: 26px; }
+.cat-head p  { margin: 0; color: var(--muted); font-size: 15.5px; }
 
 .row {
-    display: grid; grid-template-columns: 1fr auto auto;
-    gap: var(--s4); align-items: baseline;
-    padding: var(--s4) 0; border-bottom: 1px solid var(--oat-line);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 110px 130px;
+    gap: var(--s5);
+    align-items: baseline;
+    padding: var(--s4) 0;
+    border-bottom: 1px solid var(--line);
 }
-.row-name { font-weight: 500; }
-.row-desc { display: block; font-size: .9rem; color: var(--ink-soft); font-weight: 400; margin-top: 2px; }
-.row-dur { font-size: .9rem; color: var(--ink-faint); white-space: nowrap; }
-.row-price { font-family: var(--serif); font-size: 1.08rem; font-weight: 600; white-space: nowrap; }
-
-.card {
-    background: #FBF6EC; border: 1px solid var(--oat-line);
-    border-radius: var(--r-lg); padding: var(--s6);
+.row-name { font-weight: 600; }
+.row-desc { color: var(--muted); font-size: 15px; }
+.row-dur, .row-price {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-size: 15px;
 }
-
-.field { margin-bottom: var(--s5); }
-.field label, form p label { display: block; font-size: .89rem; font-weight: 700; margin-bottom: var(--s2); }
-
-input[type="text"], input[type="tel"], input[type="email"],
-input[type="date"], input[type="search"], select, textarea {
-    width: 100%; padding: 13px 16px;
-    background: #FBF6EC; border: 1.5px solid var(--oat-line);
-    border-radius: var(--r-md);
-    transition: border-color .18s, box-shadow .18s;
-}
-input:focus, select:focus, textarea:focus {
-    outline: none; border-color: var(--forest);
-    box-shadow: 0 0 0 3px var(--forest-pale);
-}
-
-.slots { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: var(--s2); }
-.slot-link, .slots button {
-    display: block; width: 100%; padding: 12px 8px; text-align: center;
-    background: #FBF6EC; border: 1.5px solid var(--oat-line);
-    border-radius: var(--r-md); font-weight: 700; color: var(--forest);
-    text-decoration: none; cursor: pointer;
-    transition: background .16s, border-color .16s, color .16s;
-}
-.slot-link:hover, .slots button:hover { background: var(--forest); border-color: var(--forest); color: var(--on-dark); }
-
-.booking-error, .form-errors {
-    background: var(--bad-bg); color: var(--bad-ink);
-    border-radius: var(--r-md); padding: var(--s5); margin-bottom: var(--s5);
-}
-.booking-error ul, .form-errors ul { margin: 0; padding-left: var(--s5); }
+.row-price { font-weight: 600; }
 
 
-/* =========================================================
-   RESPONSIVE
-   ========================================================= */
+/* ============================= MOBIL ============================= */
 
 @media (max-width: 980px) {
-    .hero-in, .doc-in, .contact-in { grid-template-columns: minmax(0, 1fr); }
-    .visit, .assure, .ba-grid { grid-template-columns: minmax(0, 1fr); }
-    .visit-step + .visit-step { padding-left: 0; }
-    .foot-grid { grid-template-columns: 1fr 1fr; }
-    .ba-grid { gap: var(--s6); }
+    .hero-in,
+    .doc-in,
+    .contact-in { grid-template-columns: minmax(0, 1fr); gap: var(--s7); }
+
+    .svc-grid { grid-template-columns: repeat(2, 1fr); }
+    .std-row  { grid-template-columns: minmax(0, 1fr); gap: var(--s2); }
 }
 
 @media (max-width: 768px) {
-    :root { --gutter: 18px; }
     body { font-size: 16px; }
-    .band { padding: var(--s8) 0; }
 
-    /* Pe mobil forma 3D dispare complet — nu merită bateria. */
-    .stage { display: none; }
-    .hero { padding-bottom: var(--s7); }
-    .hero h1 { max-width: none; }
+    .band       { padding-block: var(--s8); }
+    .band-tight { padding-block: var(--s7); }
 
-    .burger { display: flex; }
+    .burger { display: block; }
+    .topnav-in { position: relative; }
 
     .navlinks {
-        position: absolute; top: calc(100% + 8px);
-        left: var(--gutter); right: var(--gutter);
-        flex-direction: column; align-items: stretch; gap: 0;
-        margin: 0; padding: var(--s3);
-        background: var(--oat); border: 1.5px solid var(--oat-line);
-        border-radius: var(--r-lg); box-shadow: var(--lift-high);
+        position: absolute;
+        left: 0; right: 0;
+        top: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        padding: var(--s3) 0 var(--s5);
+        background: var(--white);
+        border-bottom: 1px solid var(--line);
+        box-shadow: var(--lift);
     }
-    .navlinks[hidden] { display: none; }
-    .navlinks a:not(.btn) { padding: 13px var(--s3); border-radius: var(--r-md); border-bottom: 0; }
-    .navlinks a:not(.btn):hover { background: var(--forest-pale); }
-    .nav-cta { margin: var(--s2) 0 0; }
-    .topnav-in { position: relative; background: var(--oat); border-color: var(--oat-line); }
+    .navlinks a:not(.btn) {
+        padding: var(--s3) 0;
+        border-bottom: 1px solid var(--line);
+    }
+    .nav-cta { margin-top: var(--s4); }
 
-    .urgency-hours { display: none; }
-    .foot-grid { grid-template-columns: 1fr; gap: var(--s6); }
-    .row { grid-template-columns: 1fr auto; }
-    .row-dur { display: none; }
+    /* Forma rămâne — e singura imagine a paginii. Doar se strânge. */
+    .stage { max-width: 420px; }
+
+    .factbar-in { grid-template-columns: minmax(0, 1fr); }
+    .fact-cell {
+        border-left: 0;
+        border-top: 1px solid var(--line);
+        padding: var(--s4) 0;
+    }
+    .fact-cell:first-child { border-top: 0; }
+
+    .visit { grid-template-columns: minmax(0, 1fr); border-top: 0; }
+    .visit-step {
+        padding: var(--s5) 0;
+        border-left: 0;
+        border-top: 1px solid var(--line);
+    }
+    .visit-step:first-child { border-top: 0; padding-top: 0; }
+
+    .svc-grid, .ba-grid { grid-template-columns: minmax(0, 1fr); }
+    .foot-grid { grid-template-columns: minmax(0, 1fr); gap: var(--s6); }
+    .foot-end  { flex-direction: column; gap: var(--s2); }
+
+    .row { grid-template-columns: minmax(0, 1fr) 100px; }
+    .row-desc { grid-column: 1 / -1; }
+
+    .urgency { font-size: 12.5px; }
+    .urgency-in { min-height: 38px; }
 }
 
 @media (max-width: 420px) {
-    .hero-do .btn { width: 100%; }
+    .hero-do { display: block; }
+    .hero-do .btn-lg { width: 100%; }
+    .shortcuts { margin-top: var(--s3); }
+    .plus { max-width: 96px; font-size: 11.5px; }
 }

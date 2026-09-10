@@ -5,13 +5,19 @@
 (function () {
     "use strict";
 
-    var TOOTH = "M100 20 C55 20, 32 50, 36 92 C40 130, 52 178, 66 218 " +
-                "C72 236, 92 238, 95 218 L100 168 L105 218 " +
-                "C108 238, 128 236, 134 218 C148 178, 160 130, 164 92 " +
-                "C168 50, 145 20, 100 20 Z";
+    /* Molar văzut din lateral: coroană lată cu două cuspide, gât strâns,
+       două rădăcini care se depărtează. Silueta veche era o picătură. */
+    var TOOTH = "M 38 62 C 40 38, 56 24, 74 26 C 86 27, 90 40, 100 40 " +
+                "C 110 40, 114 27, 126 26 C 144 24, 160 38, 162 62 " +
+                "C 165 84, 160 106, 150 120 C 145 127, 144 140, 144 156 " +
+                "C 144 184, 139 210, 133 226 C 129 237, 116 237, 114 226 " +
+                "C 110 200, 107 174, 104 152 C 102 142, 98 142, 96 152 " +
+                "C 93 174, 90 200, 86 226 C 84 237, 71 237, 67 226 " +
+                "C 61 210, 56 184, 56 156 C 56 140, 55 127, 50 120 " +
+                "C 40 106, 35 84, 38 62 Z";
 
     var LAYERS = 26;   /* mai multe = mai solid, dar mai scump de desenat */
-    var STEP = 1.4;    /* px între straturi pe axa Z */
+    var STEP = 1.6;    /* px între straturi pe axa Z */
 
     /* -----------------------------------------------------
        Dintele 3D.
@@ -27,8 +33,8 @@
     }
 
     function buildTooth(stage) {
-        var front = [253, 251, 246];
-        var back = [150, 165, 146];
+        var front = [255, 255, 255];
+        var back = [124, 150, 138];   /* verde-gri rece: intră în fundal */
 
         var solid = document.createElement("div");
         solid.className = "tooth-3d";
