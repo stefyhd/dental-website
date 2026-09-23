@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -27,6 +28,49 @@ DEBUG = True
 PHONENUMBER_DEFAULT_REGION = "RO"
 
 ALLOWED_HOSTS = []
+
+# ---------------------------------------------------------------------
+# SECRETE DIN .env
+#
+# Citim fișierul `.env` de lângă manage.py, dacă există. Zece rânduri de
+# stdlib în loc de o dependință nouă — formatul e simplu, CHEIE=valoare.
+#
+# `.env` e deja în .gitignore, deci nu ajunge niciodată în git.
+#
+# `setdefault`, nu `[key] =`: o variabilă pusă în terminal are prioritate
+# față de fișier. Așa poți testa altceva fără să editezi `.env`.
+# ---------------------------------------------------------------------
+ENV_FILE = BASE_DIR / ".env"
+
+if ENV_FILE.exists():
+    for line in ENV_FILE.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+
+        key, value = line.split("=", 1)
+        os.environ.setdefault(key.strip(), value.strip().strip("\"'"))
+
+
+# ---------------------------------------------------------------------
+# NOTIFICĂRI PE TELEGRAM
+#
+# Toate trei vin din mediu (deci din `.env` sau din terminal), NU scrise
+# aici: tokenul e o parolă. Cine îl are poate scrie oricui în numele
+# botului. Nu-l pune niciodată în git.
+#
+# Gol = notificările sunt oprite, iar site-ul merge normal fără ele.
+#
+#   TELEGRAM_BOT_TOKEN  de la @BotFather
+#   TELEGRAM_CHAT_ID    din `manage.py telegram_chat_id`; mai multe
+#                       despărțite prin virgulă
+#   SITE_URL            adresa publică, ca notificarea să aibă un link
+#                       către panou. Gol cât timp site-ul e doar local.
+# ---------------------------------------------------------------------
+TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
+TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
+SITE_URL = os.environ.get("SITE_URL", "")
 
 
 # Application definition
@@ -108,7 +152,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+
+LANGUAGE_CODE = "ro"
 
 TIME_ZONE = "Europe/Bucharest"
 

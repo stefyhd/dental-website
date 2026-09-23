@@ -272,7 +272,7 @@ def home(request):
     pending = (
         Appointment.objects
         .filter(status=Appointment.Status.PENDING)
-        .select_related("patient", "service")
+        .select_related("patient", "service", "category")
         .order_by("date", "time")
     )
 
@@ -283,14 +283,32 @@ def home(request):
         "agenda": build_agenda(selected_date),
         "pending": pending,
         "pending_count": pending.count(),
+        # Cererile din site vin toate cu serviciul implicit (consultația).
+        # Medicul îl schimbă aici, în momentul confirmării — atunci știe
+        # ce a scris pacientul și cât o să dureze de fapt.
+        "services": Service.objects.filter(is_active=True).select_related("category"),
     })
 
 @require_POST
 @staff_member_required(login_url="dashboard_login")
 def confirm_appointment(request, appointment_id):
     appointment = get_object_or_404(Appointment, id=appointment_id)
+    fields = ["status"]
+
+    # Serviciul ales de medic la confirmare. Dacă nu vine niciunul,
+    # rămâne cel implicit pus de site — programarea nu se blochează
+    # pentru atât.
+    service_id = request.POST.get("service")
+
+    if service_id:
+        service = Service.objects.filter(id=service_id, is_active=True).first()
+
+        if service:
+            appointment.service = service
+            fields.append("service")
+
     appointment.status = Appointment.Status.CONFIRMED
-    appointment.save(update_fields=["status"])
+    appointment.save(update_fields=fields)
 
     return_date = request.POST.get("return_date", "")
     url = reverse("dashboard_home")

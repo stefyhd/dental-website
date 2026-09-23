@@ -1196,3 +1196,40 @@ textarea:focus {
     padding-left: 16px;
     padding-right: 16px;
 }
+
+/* Cererile din site vin cu descrierea pacientului și fără serviciu ales
+   de el — medicul îl pune la confirmare. */
+.pending-notes {
+    margin: 6px 0 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--color-text-secondary);
+}
+.pending-tag {
+    display: inline-block;
+    margin: 8px 0 0;
+    padding: 2px 10px;
+    background: var(--color-badge-background);
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 600;
+}
+.pending-service {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--color-text-muted);
+}
+.pending-service select {
+    display: block;
+    width: 100%;
+    margin-top: 4px;
+    padding: 7px 9px;
+    background: var(--color-input-background);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-small);
+    font-size: 13.5px;
+    font-weight: 400;
+    color: var(--color-text);
+}

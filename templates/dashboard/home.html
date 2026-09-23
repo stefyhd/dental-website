@@ -30,10 +30,25 @@
                     <strong>{{ appointment.patient.name }}</strong>
 
                     <p>
-                        {{ appointment.service.name }}
-                        · {{ appointment.date|date:"d.m.Y" }}
+                        {{ appointment.date|date:"d.m.Y" }}
                         · {{ appointment.time|time:"H:i" }}
+                        · {{ appointment.patient.phone }}
                     </p>
+
+                    {% comment %}
+                    Ce a scris pacientul la pasul 1. Fără asta, medicul
+                    confirmă în orb — cererile din site nu mai vin cu un
+                    serviciu ales de pacient.
+                    {% endcomment %}
+                    {% if appointment.notes %}
+                        <p class="pending-notes">„{{ appointment.notes }}"</p>
+                    {% endif %}
+
+                    {% if appointment.category %}
+                        <p class="pending-tag">
+                            Pacientul a bifat: {{ appointment.category.name }}
+                        </p>
+                    {% endif %}
                 </div>
 
                 <div class="pending-actions">
@@ -45,6 +60,24 @@
                             name="return_date"
                             value="{{ selected_date|date:'Y-m-d' }}"
                         >
+
+                        {% comment %}
+                        Serviciul se stabilește AICI, la confirmare. Vine
+                        precompletat cu cel pus automat de site; medicul
+                        îl schimbă dacă descrierea arată altceva — iar
+                        durata din agendă se ia după el.
+                        {% endcomment %}
+                        <label class="pending-service">
+                            <span>Serviciu</span>
+                            <select name="service">
+                                {% for service in services %}
+                                    <option value="{{ service.id }}"
+                                        {% if service.id == appointment.service_id %}selected{% endif %}>
+                                        {{ service.name }} — {{ service.duration }} min
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </label>
 
                         <button class="confirm-button">
                             Confirmă

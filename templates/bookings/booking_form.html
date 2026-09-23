@@ -1,62 +1,120 @@
 {% extends "base.html" %}
 
-{% block title %}Date programare{% endblock %}
+{% block title %}Date de contact — {{ clinic.name }}{% endblock %}
 
 {% block content %}
-<h1>Finalizează programarea</h1>
+<section class="band-tight">
+    <div class="wrap book">
 
-<p>
-    {{ service.name }}<br>
-    {{ date|date:"d.m.Y" }}<br>
-    {{ time|time:"H:i" }}
-</p>
+        {% include "bookings/_steps.html" %}
 
-{% if booking_error %}
+        {% if booking_error %}
 
-    <div class="booking-error">
-        <p><strong>{{ booking_error }}</strong></p>
+            <h1 class="book-title">Ora nu mai e liberă</h1>
 
-        {% if alternatives %}
-            <p>Ore libere în această zi:</p>
+            <div class="book-warn">
+                <p><strong>{{ booking_error }}</strong></p>
 
-            {% for slot in alternatives %}
-                <a
-                    class="slot-link"
-                    href="{% url 'booking_details' %}?service={{ service.id }}&amp;date={{ date|date:'Y-m-d' }}&amp;time={{ slot|time:'H:i' }}"
-                >
-                    {{ slot|time:"H:i" }}
-                </a>
-            {% endfor %}
-        {% endif %}
+                {% if alternatives %}
+                    <p>Ore rămase libere în aceeași zi:</p>
+                    <div class="hours">
+                        {% for slot in alternatives %}
+                            <a class="hour" href="{% url 'booking_details' %}?date={{ date|date:'Y-m-d' }}&amp;time={{ slot|time:'H:i' }}">
+                                {{ slot|time:"H:i" }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% endif %}
 
-        <p>
-            <a href="{% url 'booking' %}?service={{ service.id }}&amp;date={{ date|date:'Y-m-d' }}">
-                Alege altă oră
-            </a>
-        </p>
-    </div>
-
-{% else %}
-
-    <form method="post" action="{% url 'create_appointment' %}">
-        {% csrf_token %}
-
-        {% if form.non_field_errors %}
-            <div class="form-errors">
-                {{ form.non_field_errors }}
+                <p>
+                    <a class="btn btn-line" href="{% url 'booking_date' %}?date={{ date|date:'Y-m-d' }}">
+                        Alege altă zi sau oră
+                    </a>
+                </p>
             </div>
+
+        {% else %}
+
+            <h1 class="book-title">Cum te contactăm?</h1>
+            <p class="book-lead">
+                Îți trebuie doar numele și un telefon. Te sunăm ca să
+                confirmăm ora.
+            </p>
+
+            {% comment %}
+            Recapitularea, înainte de ultimul câmp: omul vede ce a ales
+            fără să se întoarcă, iar dacă ceva nu e bine poate corecta
+            din linkurile de aici.
+            {% endcomment %}
+            <div class="recap recap-wide">
+                <div>
+                    <p class="recap-k">Când</p>
+                    <p class="recap-v recap-strong">
+                        {{ date|date:"l, j F Y" }}, ora {{ time|time:"H:i" }}
+                    </p>
+                    <a class="recap-edit" href="{% url 'booking_date' %}?date={{ date|date:'Y-m-d' }}">Schimbă</a>
+                </div>
+
+                <div>
+                    <p class="recap-k">Ai scris</p>
+                    <p class="recap-v">{{ draft_notes }}</p>
+                    {% if draft_category %}
+                        <p class="recap-tag">{{ draft_category.name }}</p>
+                    {% endif %}
+                    <a class="recap-edit" href="{% url 'booking' %}">Schimbă</a>
+                </div>
+            </div>
+
+            <form method="post" action="{% url 'create_appointment' %}" class="book-form" novalidate>
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="book-warn">{{ form.non_field_errors }}</div>
+                {% endif %}
+
+                {% for field in form %}
+                    {% comment %}
+                    Telefonul e un câmp compus (țară + număr) și se
+                    randează ca două controale fără înveliș, deci are
+                    nevoie de propria grilă. Iar `id_for_label` e gol la
+                    câmpurile compuse — legăm eticheta de caseta în care
+                    se scrie efectiv.
+                    {% endcomment %}
+                    <div class="field{% if field.name == 'patient_phone' %} field-phone{% endif %}">
+                        {% if field.name == 'patient_phone' %}
+                            <label for="{{ field.auto_id }}_1">{{ field.label }}</label>
+                        {% else %}
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {% endif %}
+
+                        {{ field }}
+
+                        {% if field.errors %}
+                            <p class="field-error">{{ field.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+
+                <input type="hidden" name="date" value="{{ date|date:'Y-m-d' }}">
+                <input type="hidden" name="time" value="{{ time|time:'H:i' }}">
+
+                {% comment %}
+                Mesajul ăsta trebuie citit ÎNAINTE de apăsarea butonului,
+                nu după. De-asta stă lipit de el, nu în josul paginii.
+                {% endcomment %}
+                <p class="book-pending">
+                    Trimiți o <strong>cerere</strong>, nu o programare
+                    confirmată. Ora rămâne ținută provizoriu până când
+                    medicul o confirmă și te sunăm.
+                </p>
+
+                <button class="btn btn-solid btn-lg" type="submit">
+                    Trimite cererea
+                </button>
+            </form>
+
         {% endif %}
 
-        {{ form.as_p }}
-
-        <input type="hidden" name="service" value="{{ service.id }}">
-        <input type="hidden" name="date" value="{{ date|date:'Y-m-d' }}">
-        <input type="hidden" name="time" value="{{ time|time:'H:i' }}">
-
-        <button type="submit">
-            Trimite cererea
-        </button>
-    </form>
-
-{% endif %}
+    </div>
+</section>
 {% endblock %}

@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block title %}Alege data — {{ clinic.name }}{% endblock %}
+
+{% block content %}
+<section class="band-tight">
+    <div class="wrap book">
+
+        {% include "bookings/_steps.html" %}
+
+        {% if no_service %}
+
+            <h1 class="book-title">Programările online sunt oprite</h1>
+            <p class="book-lead">
+                Momentan nu e configurat niciun serviciu, deci nu putem
+                calcula orele libere. Sună-ne și te programăm direct.
+            </p>
+            <a class="btn btn-solid btn-lg" href="tel:{{ clinic.phone_raw }}">
+                {{ clinic.phone_display }}
+            </a>
+
+        {% else %}
+
+            <h1 class="book-title">Când vrei să vii?</h1>
+            <p class="book-lead">
+                Alege o zi, apoi o oră. Programările se fac cu cel mult
+                {{ horizon_days }} de zile înainte.
+            </p>
+
+            {% comment %}
+            Ce a scris la pasul 1, ca să nu uite — și ca să poată corecta
+            fără să piardă ce a ales aici.
+            {% endcomment %}
+            <div class="recap">
+                <p class="recap-k">Ai scris</p>
+                <p class="recap-v">{{ draft_notes }}</p>
+                {% if draft_category %}
+                    <p class="recap-tag">{{ draft_category.name }}</p>
+                {% endif %}
+                <a class="recap-edit" href="{% url 'booking' %}">Schimbă</a>
+            </div>
+
+            <div class="book-cal">
+
+                <div class="cal">
+                    <div class="cal-head">
+                        {% if previous_month %}
+                            <a class="cal-step" rel="prev"
+                               href="?month={{ previous_month.0 }}-{{ previous_month.1|stringformat:'02d' }}"
+                               aria-label="Luna anterioară">‹</a>
+                        {% else %}
+                            <span class="cal-step is-off" aria-hidden="true">‹</span>
+                        {% endif %}
+
+                        <strong class="cal-month">{{ month_label|date:"F Y" }}</strong>
+
+                        {% if next_month %}
+                            <a class="cal-step" rel="next"
+                               href="?month={{ next_month.0 }}-{{ next_month.1|stringformat:'02d' }}"
+                               aria-label="Luna următoare">›</a>
+                        {% else %}
+                            <span class="cal-step is-off" aria-hidden="true">›</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="cal-week">
+                        {% for label in weekday_labels %}
+                            <abbr class="cal-wd">{{ label }}</abbr>
+                        {% endfor %}
+                    </div>
+
+                    {% for week in weeks %}
+                        <div class="cal-week">
+                            {% for cell in week %}
+                                {% if not cell.in_month %}
+                                    <span class="cal-day is-out" aria-hidden="true">{{ cell.day }}</span>
+                                {% elif cell.open %}
+                                    <a class="cal-day{% if cell.date == selected_date %} is-on{% endif %}{% if cell.is_today %} is-today{% endif %}"
+                                       href="?month={{ month_label|date:'Y-m' }}&amp;date={{ cell.date|date:'Y-m-d' }}"
+                                       aria-label="{{ cell.date|date:'j F' }}"
+                                       {% if cell.date == selected_date %}aria-current="date"{% endif %}>
+                                        {{ cell.day }}
+                                    </a>
+                                {% else %}
+                                    <span class="cal-day is-off" title="{{ cell.reason }}">{{ cell.day }}</span>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="hours-pane">
+                    {% if not selected_date %}
+
+                        <p class="hours-empty">Alege o zi din calendar.</p>
+                        {% if suggestion %}
+                            <a class="btn btn-line"
+                               href="?month={{ suggestion|date:'Y-m' }}&amp;date={{ suggestion|date:'Y-m-d' }}">
+                                Următoarea zi liberă: {{ suggestion|date:"j F" }}
+                            </a>
+                        {% endif %}
+
+                    {% elif slots %}
+
+                        <p class="hours-day">{{ selected_date|date:"l, j F" }}</p>
+
+                        {% if morning %}
+                            <p class="hours-part">Dimineața</p>
+                            <div class="hours">
+                                {% for slot in morning %}
+                                    <a class="hour" href="{% url 'booking_details' %}?date={{ selected_date|date:'Y-m-d' }}&amp;time={{ slot|time:'H:i' }}">
+                                        {{ slot|time:"H:i" }}
+                                    </a>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        {% if afternoon %}
+                            <p class="hours-part">După-amiaza</p>
+                            <div class="hours">
+                                {% for slot in afternoon %}
+                                    <a class="hour" href="{% url 'booking_details' %}?date={{ selected_date|date:'Y-m-d' }}&amp;time={{ slot|time:'H:i' }}">
+                                        {{ slot|time:"H:i" }}
+                                    </a>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                    {% else %}
+
+                        <p class="hours-day">{{ selected_date|date:"l, j F" }}</p>
+                        <p class="hours-empty">Nu mai sunt ore libere în ziua asta.</p>
+                        {% if suggestion %}
+                            <a class="btn btn-line"
+                               href="?month={{ suggestion|date:'Y-m' }}&amp;date={{ suggestion|date:'Y-m-d' }}">
+                                Următoarea zi liberă: {{ suggestion|date:"j F" }}
+                            </a>
+                        {% else %}
+                            <p class="hours-empty">
+                                Nu găsim nicio oră liberă în următoarele
+                                {{ horizon_days }} de zile. Sună-ne la
+                                <a href="tel:{{ clinic.phone_raw }}">{{ clinic.phone_display }}</a>.
+                            </p>
+                        {% endif %}
+
+                    {% endif %}
+                </div>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+</section>
+{% endblock %}

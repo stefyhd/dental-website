@@ -1,18 +1,14 @@
-/* =========================================================
-   SITE PUBLIC
+/*
+ * SITE PUBLIC — style.css
+ * Se încarcă după tokens.css. Dashboardul folosește dashboard.css separat.
+ * Ordine: bază, butoane, navbar, hero, secțiuni publice, programare, responsive.
+ * Hero: un singur bloc, cu toate stările lui. Nu mai adăuga patch-uri la final.
+ * Reglaje hero: .stage (dimensiuni), .shape-cta .btn (16px), .tooth-stage (inset).
+ * Prag compact: max-width 1000px SAU max-height 620px.
+ * .hours: table.hours pentru programul cabinetului; .book .hours pentru rezervare.
+ */
 
-   Regula de bază a foii ăsteia: separatorul implicit e o
-   linie de 1px, nu o umbră și nu un card rotunjit. Un cabinet
-   se uită a instituție când marginile sunt drepte și grila e
-   respectată, nu când totul plutește.
-
-   Ordinea: bază → butoane → bară urgență → navbar → hero →
-   bară de fapte → prima vizită → medic → servicii →
-   standarde → înainte/după → contact → footer → mobil.
-   ========================================================= */
-
-
-/* ============================ BAZĂ ============================ */
+/* ==================== BAZĂ ==================== */
 
 .skip-link {
     position: absolute;
@@ -24,6 +20,7 @@
     padding: var(--s3) var(--s5);
     text-decoration: none;
 }
+
 .skip-link:focus { left: 0; }
 
 .wrap {
@@ -33,42 +30,31 @@
     padding-inline: var(--gutter);
 }
 
-/* Ritmul secțiunilor. O singură scară, ca să nu mai pară haotic. */
-.band       { padding-block: var(--s9); }
+.band { padding-block: var(--s9); }
+
 .band-tight { padding-block: var(--s8); }
 
-/* Bara de sus e lipită; fără asta, ancorele (#despre, #servicii)
-   duc titlul exact sub navbar. */
 section[id] { scroll-margin-top: 90px; }
 
-.band-white               { background: var(--white); }
-.band-tint, .band-oat     { background: var(--green-tint); }
+.band-white { background: var(--white); }
 
-.band-green, .band-forest {
-    background: var(--green);
-    color: var(--white);
-}
+.band-tint, .band-oat { background: var(--green-tint); }
+
+.band-green, .band-forest { background: var(--green); color: var(--white); }
+
 .band-green a, .band-forest a { color: var(--white); }
 
-/* Capul de secțiune. Titlu + o singură frază care spune la ce
-   folosește secțiunea. Fără etichete cu majuscule deasupra. */
-.lead-in {
-    max-width: 46ch;
-    margin-bottom: var(--s7);
-}
-.lead-in h2 {
-    font-size: clamp(28px, 3.4vw, 40px);
-    font-weight: 600;
-}
-.lead-in p {
-    margin: 0;
-    color: var(--muted);
-    font-size: 17px;
-}
+.lead-in { max-width: 46ch; margin-bottom: var(--s7); }
+
+.lead-in h2 { font-size: clamp(28px, 3.4vw, 40px); font-weight: 600; }
+
+.lead-in p { margin: 0; color: var(--muted); font-size: 17px; }
+
 .band-green .lead-in p, .band-forest .lead-in p { color: var(--muted-dark); }
 
+p { text-align: justify; text-align-last: start; }
 
-/* =========================== BUTOANE =========================== */
+/* ==================== BUTOANE ==================== */
 
 .btn {
     display: inline-flex;
@@ -90,20 +76,17 @@ section[id] { scroll-margin-top: 90px; }
     background: var(--green);
     color: var(--white);
     border-color: var(--green);
+    border-radius: var(--r-lg);
 }
+
 .btn-solid:hover { background: var(--ink); border-color: var(--ink); }
 
-.btn-line {
-    background: transparent;
-    color: var(--green);
-    border-color: var(--line-strong);
-}
+.btn-line { background: transparent; color: var(--green); border-color: var(--line-strong); }
+
 .btn-line:hover { border-color: var(--green); background: var(--white); }
 
-.band-green .btn-line, .band-forest .btn-line {
-    color: var(--white);
-    border-color: var(--line-dark);
-}
+.band-green .btn-line, .band-forest .btn-line { color: var(--white); border-color: var(--line-dark); }
+
 .band-green .btn-line:hover, .band-forest .btn-line:hover {
     background: transparent;
     border-color: var(--white);
@@ -111,15 +94,10 @@ section[id] { scroll-margin-top: 90px; }
 
 .btn-lg { padding: 17px 34px; font-size: 16px; }
 
+/* ==================== BARĂ DE URGENȚĂ ==================== */
 
-/* ======================== BARĂ DE URGENȚĂ ======================== */
-/* Prima linie a paginii. Omul cu durere sună, nu citește. */
+.urgency { background: var(--ink); color: var(--white); font-size: 13.5px; }
 
-.urgency {
-    background: var(--ink);
-    color: var(--white);
-    font-size: 13.5px;
-}
 .urgency-in {
     display: flex;
     align-items: center;
@@ -127,17 +105,21 @@ section[id] { scroll-margin-top: 90px; }
     gap: var(--s4);
     min-height: 40px;
 }
+
 .urgency-hours {
     display: inline-flex;
     align-items: center;
     gap: var(--s2);
     color: #C6D4CC;
 }
+
 .dot {
-    width: 7px; height: 7px;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
     background: #6FCF97;
 }
+
 .dot-off { background: #9AA8A1; }
 
 .urgency-call {
@@ -148,13 +130,12 @@ section[id] { scroll-margin-top: 90px; }
     font-weight: 600;
     text-decoration: none;
 }
+
 .urgency-call svg { color: var(--signal); }
+
 .urgency-call:hover { text-decoration: underline; }
 
-
-/* ============================ NAVBAR ============================ */
-/* Două stări, aceeași bară: albă tot timpul, cu umbră abia după
-   ce pleci de pe hero. Nimic care să sară. */
+/* ==================== NAVBAR ==================== */
 
 .topnav {
     position: sticky;
@@ -164,6 +145,7 @@ section[id] { scroll-margin-top: 90px; }
     border-bottom: 1px solid var(--line);
     transition: box-shadow .18s ease;
 }
+
 .topnav.pinned { box-shadow: var(--lift); }
 
 .topnav-in {
@@ -182,15 +164,10 @@ section[id] { scroll-margin-top: 90px; }
     text-decoration: none;
 }
 
-.navlinks {
-    display: flex;
-    align-items: center;
-    gap: var(--s6);
-}
-/* `display:flex` de mai sus bate `[hidden]{display:none}` din browser.
-   Fără linia asta, meniul de mobil e deschis la încărcarea paginii. */
+.navlinks { display: flex; align-items: center; gap: var(--s6); }
+
 .navlinks[hidden] { display: none; }
-/* :not(.btn) — altfel selectorul ăsta bate .btn-solid pe CTA. */
+
 .navlinks a:not(.btn) {
     font-size: 15px;
     font-weight: 500;
@@ -199,107 +176,144 @@ section[id] { scroll-margin-top: 90px; }
     padding-block: 4px;
     border-bottom: 2px solid transparent;
 }
-.navlinks a:not(.btn):hover {
-    color: var(--ink);
-    border-bottom-color: var(--green);
-}
+
+.navlinks a:not(.btn):hover { color: var(--ink); border-bottom-color: var(--green); }
+
 .nav-cta { padding: 11px 20px; }
 
 .burger {
     display: none;
-    width: 42px; height: 42px;
+    width: 42px;
+    height: 42px;
     padding: 0;
     background: none;
     border: 1px solid var(--line);
     border-radius: var(--r-sm);
     cursor: pointer;
 }
-.burger span,
-.burger span::before,
-.burger span::after {
+
+.burger span, .burger span::before, .burger span::after {
     display: block;
-    width: 18px; height: 2px;
+    width: 18px;
+    height: 2px;
     margin-inline: auto;
     background: var(--ink);
     content: "";
 }
+
 .burger span::before { transform: translateY(-6px); }
-.burger span::after  { transform: translateY(4px); }
 
+.burger span::after { transform: translateY(4px); }
 
-/* ============================= HERO ============================= */
+/* ==================== HERO ==================== */
 
 .hero {
+    --hero-header-height: 109px;
     background: var(--white);
-    padding-block: var(--s8);
+    box-sizing: border-box;
+    min-height: calc(100vh - var(--hero-header-height));
+    min-height: calc(100svh - var(--hero-header-height));
+    padding-block: clamp(24px, 4vh, 48px);
+    padding-block: clamp(24px, 4svh, 48px);
+    display: flex;
+    align-items: center;
     overflow: hidden;
 }
 
-.hero-in {
+.hero .hero-in {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 440px);
-    gap: var(--s8);
-    align-items: start;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(24px, 3vw, 48px);
+    align-items: center;
 }
 
 .hero h1 {
     max-width: 15ch;
     margin: 0 0 var(--s5);
-    font-size: clamp(38px, 5.4vw, 62px);
+    font-size: clamp(34px, 4.6vw, 58px);
     font-weight: 600;
-    line-height: 1.04;
+    line-height: 1.05;
     letter-spacing: -.032em;
 }
 
-.hero-copy {
-    max-width: 46ch;
+.hero .hero-copy {
+    max-width: 44ch;
     margin: 0 0 var(--s6);
-    font-size: 18.5px;
-    line-height: 1.62;
+    font-size: 18px;
+    line-height: 1.6;
     color: var(--ink-2);
 }
 
-.hero-do {
+.hero .hero-do {
     display: flex;
     align-items: flex-start;
     flex-wrap: wrap;
     gap: var(--s4);
 }
 
-
-/* ---- Forma din hero ---- */
-
-/* ---- Forma din hero ---- */
-
-.stage { position: relative; }
-.shape-wrap { position: relative; }
-
-/* `aspect-ratio` = dimensiunile frame-ului din Figma (629 × 831).
-   Dacă nu se potrivesc, masca taie forma pe diagonală. */
-.shape {
+.hero .stage {
     position: relative;
-    aspect-ratio: 629 / 831;
-    background: var(--green);
-    clip-path: url(#shapeMask);
-    overflow: hidden;
+    width: min(520px, 56vh);
+    width: min(520px, 56svh);
+    max-width: 100%;
+    min-width: 0;
+    justify-self: end;
 }
 
-.shortcuts {
+.hero .shape-wrap { position: relative; width: 100%; aspect-ratio: 629 / 831; }
+
+.hero .shape {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 629 / 831;
+    background: var(--green-tint);
+    clip-path: url(#shapeMask);
+    overflow: hidden;
+    isolation: isolate;
+}
+
+.hero .shape-cta {
+    position: absolute;
+    inset: 88.2% 0 0 61.2%;
+    z-index: 2;
+    display: grid;
+    place-items: stretch;
+    width: auto;
+    height: auto;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.hero .shape-cta .btn {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    border-radius: 16px;
+    font-size: clamp(14px, 1.1vw, 16px);
+}
+
+.hero .shortcuts {
     position: absolute;
     top: 0;
     left: 0;
+    z-index: 2;
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    /* Lățimea e PROCENT din formă, nu pixeli. Scobitura ține 15,5%
-       din lățime și 34,9% din înălțime; trei butoane de 12% lățime
-       (adică 9,1% din înălțime, forma fiind 629×831) plus spații fac
-       ~29% — încap la orice dimensiune a ecranului, fără breakpoint. */
+    justify-content: space-between;
+    gap: 0;
     width: 12%;
+    height: 32%;
 }
-.shortcut {
+
+.hero .shortcut {
     display: grid;
     place-items: center;
+    flex-shrink: 0;
     width: 100%;
     aspect-ratio: 1;
     background: var(--green);
@@ -308,27 +322,16 @@ section[id] { scroll-margin-top: 90px; }
     color: var(--white);
     transition: background-color .16s ease, border-color .16s ease;
 }
-.shortcut:hover { background: var(--ink); border-color: var(--ink); }
-.shortcut svg { width: 40%; height: auto; }
 
-/* Dintele: mare, și împins spre dreapta. Centrat perfect ar fi
-   prea așezat — decentrat lasă loc etichetelor din stânga și dă
-   compoziției un pic de tensiune.
-   inset = sus | dreapta | jos | stânga. Stânga mai mare decât
-   dreapta = dintele stă mai la dreapta. */
-.tooth-stage {
-    position: absolute;
-    inset: 6% 8% 10% 22%;
-}
-.tooth-flat {
-    width: 100%;
-    height: 100%;
-    transition: opacity .4s ease;
-}
+.hero .shortcut:hover { background: var(--ink); border-color: var(--ink); }
 
-/* Modelul 3D intră peste silueta plată abia după ce s-a încărcat,
-   ca să nu existe o gaură în hero cât se descarcă. */
-.tooth-3d {
+.hero .shortcut svg { width: 42%; height: auto; }
+
+.hero .tooth-stage { position: absolute; inset: 6% 3% 13% 18%; }
+
+.hero .tooth-flat { width: 100%; height: 100%; transition: opacity .4s ease; }
+
+.hero .tooth-3d {
     position: absolute;
     inset: 0;
     width: 100%;
@@ -339,101 +342,163 @@ section[id] { scroll-margin-top: 90px; }
     --progress-bar-color: transparent;
     background: transparent;
 }
-.tooth-stage.ready .tooth-3d  { opacity: 1; }
-.tooth-stage.ready .tooth-flat { opacity: 0; }
 
-/* ---- Semnele „+" cu beneficiu ---- */
+.hero .tooth-stage.ready .tooth-3d { opacity: 1; }
 
-/* Terenul pe care JS-ul așază etichetele. Ascuns pentru cititoarele
-   de ecran: text care apare și dispare singur e zgomot, iar aceleași
-   informații stau scrise mai jos, în secțiunea de standarde. */
-.plus-field {
+.hero .tooth-stage.ready .tooth-flat { opacity: 0; }
+
+.hero .plus-field {
     position: absolute;
     inset: 0;
+    z-index: 1;
     pointer-events: none;
 }
 
-/* Cele două benzi în care au voie să apară etichetele. Sunt exact
-   porțiunile care rămân VERZI în masca din Figma, plus o margine
-   față de dinte:
-     stânga  — începe sub scobitura de sus (34,9%)
-     dreapta — se oprește deasupra scobiturii de jos (86,6%)
-   Dacă schimbi masca, umbli AICI, la două rânduri, nu la fiecare
-   slot din site.js. Asta e tot ce ține etichetele în cadru. */
-.plus-band { position: absolute; }
-.plus-left  { left: 4%;  width: 25%; top: 40%; height: 52%; }
-.plus-right { right: 3%; width: 25%; top: 4%;  height: 74%; }
-
-.plus {
+.hero .plus {
+    --x: 0px;
     position: absolute;
-    display: flex;
-    align-items: flex-start;
-    gap: 7px;
-    max-width: 100%;
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    max-width: min(66%, 240px);
+    box-sizing: border-box;
+    padding: 7px 13px 7px 7px;
+    border: 1px solid color-mix(in srgb, var(--white) 24%, transparent);
+    border-radius: var(--r-pill);
+    background: var(--green);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--green) 87%, var(--white)), color-mix(in srgb, var(--green) 93%, transparent));
     color: var(--white);
-    font-size: 13px;
+    box-shadow: 0 6px 18px color-mix(in srgb, var(--ink) 14%, transparent), inset 0 1px 0 color-mix(in srgb, var(--white) 10%, transparent);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    font-size: 12.5px;
     font-weight: 500;
     line-height: 1.35;
-    letter-spacing: -.005em;
+    letter-spacing: -.01em;
+    white-space: normal;
     opacity: 0;
-    transform: translateY(6px);
-    transition: opacity .5s ease, transform .5s ease;
-}
-.plus.on { opacity: 1; transform: none; }
-
-.plus i {
-    flex: none;
-    font-style: normal;
-    font-size: 16px;
-    font-weight: 400;
-    line-height: 1.15;
-    opacity: .7;
+    transform: translate(var(--x), 8px) scale(.98);
+    transition: opacity .45s ease, transform .45s cubic-bezier(.2, .8, .3, 1);
 }
 
-/* Pozițiile din HTML — se văd doar dacă JS-ul nu rulează. Stau în
-   aceleași zone sigure ca benzile de mai sus. */
-.p1 { top: 45%; left: 4%;  max-width: 25%; }
-.p2 { top: 20%; right: 3%; max-width: 25%; }
-.p3 { top: 70%; left: 4%;  max-width: 25%; }
+.hero .plus.on { opacity: 1; transform: translate(var(--x), 0) scale(1); }
 
-
-.shape-cta {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    width: 44.4%;
-    height: 13.4%;
-    display: grid;
-    place-items: stretch;
-    /* Aer sus și în stânga: fără el pastila umple scobitura exact și
-       cele două forme se topesc una în alta — se pierde și scobitura,
-       și butonul. Cu 10px de alb în jur, scobitura citește ca decupaj
-       intenționat, iar butonul ca obiect așezat în el. */
-    padding: 10px 0 0 12px;
-}
-.shape-cta .btn {
-    width: 100%;
-    padding: 0;
-    border-radius: var(--r-pill);
-    font-size: 16px;
-}
-
-
-/* ========================= BARĂ DE FAPTE ========================= */
-/* Ce caută omul în primele 5 secunde: e deschis? unde e? ce număr? */
-
-.factbar {
+.hero .plus i {
+    position: relative;
+    display: block;
+    flex: 0 0 26px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
     background: var(--white);
-    border-block: 1px solid var(--line);
+    color: var(--green);
+    font-size: 0;
+    font-style: normal;
 }
-.factbar-in {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+
+.hero .plus i::before, .hero .plus i::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    border-radius: var(--r-pill);
+    background: currentColor;
+    transform: translate(-50%, -50%);
 }
-.fact-cell {
-    padding: var(--s5) var(--s5) var(--s5) var(--s5);
-    border-left: 1px solid var(--line);
+
+.hero .plus i::before { width: 10px; height: 1.5px; }
+
+.hero .plus i::after { width: 1.5px; height: 10px; }
+
+.hero .plus-left { left: 5%; right: auto; }
+
+.hero .plus-right { right: 5%; left: auto; }
+
+.hero .plus-center { left: 57%; right: auto; --x: -50%; }
+
+.hero .p1 { top: 46%; left: 5%; }
+
+.hero .p2 { top: 20%; right: 5%; }
+
+.hero .p3 { top: 72%; right: 5%; }
+
+@media (max-width: 1000px), (max-height: 620px) {
+    .hero .hero-in { grid-template-columns: minmax(0, 1fr); gap: 20px; justify-items: center; }
+
+    .hero .hero-in > div:first-child { width: 100%; min-width: 0; text-align: center; }
+
+    .hero h1, .hero .hero-copy { margin-inline: auto; }
+
+    .hero .hero-do { justify-content: center; }
+
+    .hero .shape-wrap { display: none; }
+
+    .hero .stage {
+        position: static;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 12px 18px;
+        width: 100%;
+        max-width: none;
+        justify-self: center;
+    }
+
+    .hero .shortcuts {
+        position: static;
+        inset: auto;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        width: auto;
+        height: auto;
+    }
+
+    .hero .shortcut {
+        flex: 0 0 46px;
+        width: 46px;
+        height: 46px;
+        background: transparent;
+        border: 1.5px solid var(--green);
+        color: var(--green);
+        box-shadow: none;
+    }
+
+    .hero .shortcut:hover, .hero .shortcut:focus-visible {
+        background: var(--green);
+        border-color: var(--green);
+        color: var(--white);
+    }
+
+    .hero .shortcut svg { width: 20px; height: 20px; }
 }
+
+@media (max-width: 768px) {
+    .hero { --hero-header-height: 107px; }
+}
+
+@media (max-width: 620px) {
+    .hero .hero-in { gap: 12px; }
+
+    .hero .hero-do .btn-lg { width: 100%; min-height: 52px; }
+
+    .hero .stage { flex-direction: column; align-items: stretch; gap: 20px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero .plus { transition: none; }
+}
+
+/* ==================== BARĂ DE FAPTE ==================== */
+
+.factbar { background: var(--white); border-block: 1px solid var(--line); }
+
+.factbar-in { display: grid; grid-template-columns: repeat(3, 1fr); }
+
+.fact-cell { padding: var(--s5) var(--s5) var(--s5) var(--s5); border-left: 1px solid var(--line); }
+
 .fact-cell:first-child { border-left: 0; padding-left: 0; }
 
 .fact-k {
@@ -442,6 +507,7 @@ section[id] { scroll-margin-top: 90px; }
     font-weight: 600;
     color: var(--muted);
 }
+
 .fact-v {
     display: block;
     margin: 0;
@@ -451,16 +517,12 @@ section[id] { scroll-margin-top: 90px; }
     text-decoration: none;
     letter-spacing: -.015em;
 }
+
 a.fact-v:hover { color: var(--green); text-decoration: underline; }
-.fact-note {
-    margin: 2px 0 0;
-    font-size: 13.5px;
-    color: var(--muted);
-}
 
+.fact-note { margin: 2px 0 0; font-size: 13.5px; color: var(--muted); }
 
-/* ========================== PRIMA VIZITĂ ========================== */
-/* Numerotate pentru că e chiar o secvență, nu decor. */
+/* ==================== PRIMA VIZITĂ ==================== */
 
 .visit {
     display: grid;
@@ -468,12 +530,12 @@ a.fact-v:hover { color: var(--green); text-decoration: underline; }
     gap: 0;
     border-top: 1px solid var(--line);
 }
-.visit-step {
-    padding: var(--s6) var(--s6) 0 var(--s6);
-    border-left: 1px solid var(--line);
-}
+
+.visit-step { padding: var(--s6) var(--s6) 0 var(--s6); border-left: 1px solid var(--line); }
+
 .visit-step:first-child { border-left: 0; padding-left: 0; }
-.visit-step:last-child  { padding-right: 0; }
+
+.visit-step:last-child { padding-right: 0; }
 
 .visit-n {
     margin: 0 0 var(--s4);
@@ -482,29 +544,20 @@ a.fact-v:hover { color: var(--green); text-decoration: underline; }
     color: var(--green);
     font-variant-numeric: tabular-nums;
 }
-.visit-step h3 {
-    margin: 0 0 var(--s3);
-    font-size: 21px;
-    font-weight: 600;
-}
-.visit-step p {
-    margin: 0;
-    color: var(--muted);
-    font-size: 16px;
-}
-.band-green .visit,
-.band-forest .visit { border-top-color: var(--line-dark); }
-.band-green .visit-step,
-.band-forest .visit-step { border-left-color: var(--line-dark); }
-.band-green .visit-n,
-.band-forest .visit-n { color: var(--white); }
-.band-green .visit-step p,
-.band-forest .visit-step p { color: var(--muted-dark); }
 
+.visit-step h3 { margin: 0 0 var(--s3); font-size: 21px; font-weight: 600; }
 
-/* ============================= MEDIC ============================= */
-/* Mutat sus, imediat după prima vizită: încrederea într-un cabinet
-   cu un singur medic e încrederea în medicul ăla. */
+.visit-step p { margin: 0; color: var(--muted); font-size: 16px; }
+
+.band-green .visit, .band-forest .visit { border-top-color: var(--line-dark); }
+
+.band-green .visit-step, .band-forest .visit-step { border-left-color: var(--line-dark); }
+
+.band-green .visit-n, .band-forest .visit-n { color: var(--white); }
+
+.band-green .visit-step p, .band-forest .visit-step p { color: var(--muted-dark); }
+
+/* ==================== MEDIC ==================== */
 
 .doc-in {
     display: grid;
@@ -512,6 +565,7 @@ a.fact-v:hover { color: var(--green); text-decoration: underline; }
     gap: var(--s8);
     align-items: start;
 }
+
 .doc-shot {
     aspect-ratio: 4 / 5;
     background: var(--green-tint);
@@ -519,22 +573,13 @@ a.fact-v:hover { color: var(--green); text-decoration: underline; }
     border-radius: var(--r-md);
     overflow: hidden;
 }
-.doc-photo {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
 
-.doc-name {
-    margin: 0 0 2px;
-    font-size: clamp(28px, 3.2vw, 38px);
-    font-weight: 600;
-}
-.doc-title {
-    margin: 0 0 var(--s6);
-    color: var(--muted);
-    font-size: 16px;
-}
+.doc-photo { width: 100%; height: 100%; object-fit: cover; }
+
+.doc-name { margin: 0 0 2px; font-size: clamp(28px, 3.2vw, 38px); font-weight: 600; }
+
+.doc-title { margin: 0 0 var(--s6); color: var(--muted); font-size: 16px; }
+
 .doc-in p { max-width: 62ch; }
 
 .doc-pull {
@@ -548,8 +593,6 @@ a.fact-v:hover { color: var(--green); text-decoration: underline; }
     color: var(--ink);
 }
 
-/* Acreditările. Astea fac diferența dintre „un medic tânăr" și
-   „un medic care știe ce face" — dar numai dacă sunt verificabile. */
 .creds {
     margin: var(--s6) 0;
     padding: 0;
@@ -557,6 +600,7 @@ a.fact-v:hover { color: var(--green); text-decoration: underline; }
     border-top: 1px solid var(--line);
     max-width: 62ch;
 }
+
 .creds li {
     display: flex;
     justify-content: space-between;
@@ -565,12 +609,10 @@ a.fact-v:hover { color: var(--green); text-decoration: underline; }
     border-bottom: 1px solid var(--line);
     font-size: 15.5px;
 }
+
 .creds span { color: var(--muted); flex: none; }
 
-
-/* ============================ SERVICII ============================ */
-/* Grilă de 3 pe rând, toate categoriile active. Fiecare card spune
-   ce intră în categorie — „4 servicii" nu ajută pe nimeni. */
+/* ==================== SERVICII ==================== */
 
 .svc-grid {
     display: grid;
@@ -579,6 +621,7 @@ a.fact-v:hover { color: var(--green); text-decoration: underline; }
     background: var(--line);
     border: 1px solid var(--line);
 }
+
 .svc {
     display: flex;
     flex-direction: column;
@@ -588,6 +631,7 @@ a.fact-v:hover { color: var(--green); text-decoration: underline; }
     text-decoration: none;
     transition: background-color .16s ease;
 }
+
 .svc:hover { background: var(--green-tint); }
 
 .svc-name {
@@ -596,12 +640,14 @@ a.fact-v:hover { color: var(--green); text-decoration: underline; }
     letter-spacing: -.02em;
     color: var(--ink);
 }
+
 .svc-list {
     margin: 0;
     color: var(--muted);
     font-size: 15px;
     line-height: 1.55;
 }
+
 .svc-from {
     margin-top: auto;
     padding-top: var(--s4);
@@ -612,10 +658,7 @@ a.fact-v:hover { color: var(--green); text-decoration: underline; }
 
 .svc-all { margin-top: var(--s6); }
 
-
-/* =========================== STANDARDE =========================== */
-/* Rânduri cu linie, nu carduri. Un tabel de proceduri arată a
-   protocol; șase carduri rotunjite arată a landing page. */
+/* ==================== STANDARDE ==================== */
 
 .std { border-top: 1px solid var(--line-dark); }
 
@@ -626,11 +669,9 @@ a.fact-v:hover { color: var(--green); text-decoration: underline; }
     padding: var(--s5) 0;
     border-bottom: 1px solid var(--line-dark);
 }
-.std-row h3 {
-    margin: 0;
-    font-size: 18px;
-    font-weight: 600;
-}
+
+.std-row h3 { margin: 0; font-size: 18px; font-weight: 600; }
+
 .std-row p {
     margin: 0;
     color: var(--muted-dark);
@@ -638,14 +679,10 @@ a.fact-v:hover { color: var(--green); text-decoration: underline; }
     max-width: 62ch;
 }
 
+/* ==================== ÎNAINTE / DUPĂ ==================== */
 
-/* ========================= ÎNAINTE / DUPĂ ========================= */
+.ba-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s5); }
 
-.ba-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--s5);
-}
 .ba {
     position: relative;
     aspect-ratio: 4 / 3;
@@ -653,47 +690,49 @@ a.fact-v:hover { color: var(--green); text-decoration: underline; }
     overflow: hidden;
     background: var(--green-tint);
 }
+
 .ba img {
     position: absolute;
     inset: 0;
-    width: 100%; height: 100%;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
 }
+
 .ba-after {
     position: absolute;
     inset: 0;
     width: var(--pos);
     overflow: hidden;
 }
+
 .ba-after img { width: auto; min-width: 100%; }
 
 .ba-bar {
     position: absolute;
-    top: 0; bottom: 0;
+    top: 0;
+    bottom: 0;
     left: var(--pos);
     width: 2px;
     background: var(--white);
-    /* Conturul ține linia vizibilă și pe o poză deschisă la culoare. */
     box-shadow: 0 0 0 1px rgba(18, 33, 28, .3);
     transform: translateX(-1px);
     pointer-events: none;
 }
+
 .ba-range {
     position: absolute;
     inset: 0;
-    width: 100%; height: 100%;
+    width: 100%;
+    height: 100%;
     margin: 0;
     opacity: 0;
     cursor: ew-resize;
 }
-.ba-caption {
-    margin: var(--s3) 0 0;
-    font-size: 14px;
-    color: var(--muted);
-}
 
+.ba-caption { margin: var(--s3) 0 0; font-size: 14px; color: var(--muted); }
 
-/* ============================ CONTACT ============================ */
+/* ==================== CONTACT ==================== */
 
 .contact-in {
     display: grid;
@@ -702,10 +741,8 @@ a.fact-v:hover { color: var(--green); text-decoration: underline; }
     align-items: start;
 }
 
-.facts {
-    margin: 0 0 var(--s6);
-    border-top: 1px solid var(--line);
-}
+.facts { margin: 0 0 var(--s6); border-top: 1px solid var(--line); }
+
 .facts > div {
     display: grid;
     grid-template-columns: 110px minmax(0, 1fr);
@@ -713,23 +750,28 @@ a.fact-v:hover { color: var(--green); text-decoration: underline; }
     padding: var(--s3) 0;
     border-bottom: 1px solid var(--line);
 }
+
 .facts dt, .facts dd { margin: 0; }
+
 .facts .fact-v { font-size: 16px; }
 
-.hours {
+table.hours {
     width: 100%;
     margin-top: var(--s3);
     border-collapse: collapse;
     font-size: 15.5px;
 }
-.hours th, .hours td {
+
+table.hours th, table.hours td {
     padding: 9px 0;
     text-align: left;
     font-weight: 400;
     border-bottom: 1px solid var(--line);
 }
-.hours td { text-align: right; font-variant-numeric: tabular-nums; }
-.hours tr.now th, .hours tr.now td { font-weight: 700; color: var(--green); }
+
+table.hours td { text-align: right; font-variant-numeric: tabular-nums; }
+
+table.hours tr.now th, table.hours tr.now td { font-weight: 700; color: var(--green); }
 
 .map {
     position: relative;
@@ -739,7 +781,9 @@ a.fact-v:hover { color: var(--green); text-decoration: underline; }
     border-radius: var(--r-md);
     overflow: hidden;
 }
+
 .map iframe { width: 100%; height: 100%; border: 0; }
+
 .map-ask {
     position: absolute;
     inset: 0;
@@ -753,20 +797,17 @@ a.fact-v:hover { color: var(--green); text-decoration: underline; }
     cursor: pointer;
     text-align: center;
 }
+
 .map-ask small {
     max-width: 34ch;
     color: var(--muted);
     font-size: 13px;
     line-height: 1.5;
 }
-.map-go {
-    display: flex;
-    gap: var(--s3);
-    margin-top: var(--s4);
-}
 
+.map-go { display: flex; gap: var(--s3); margin-top: var(--s4); }
 
-/* ============================= FOOTER ============================= */
+/* ==================== FOOTER ==================== */
 
 .foot {
     background: var(--ink);
@@ -774,6 +815,7 @@ a.fact-v:hover { color: var(--green); text-decoration: underline; }
     padding-block: var(--s8) var(--s6);
     font-size: 15px;
 }
+
 .foot-grid {
     display: grid;
     grid-template-columns: minmax(0, 1.4fr) repeat(2, minmax(0, 1fr));
@@ -781,6 +823,7 @@ a.fact-v:hover { color: var(--green); text-decoration: underline; }
     padding-bottom: var(--s7);
     border-bottom: 1px solid var(--line-dark);
 }
+
 .foot-brand {
     margin: 0 0 var(--s2);
     color: var(--white);
@@ -788,37 +831,42 @@ a.fact-v:hover { color: var(--green); text-decoration: underline; }
     font-weight: 700;
     letter-spacing: -.02em;
 }
+
 .foot h4 {
     margin: 0 0 var(--s3);
     color: var(--white);
     font-size: 14px;
     font-weight: 600;
 }
+
 .foot ul { margin: 0; padding: 0; list-style: none; }
+
 .foot li { margin-bottom: 7px; }
+
 .foot a { text-decoration: none; }
+
 .foot a:hover { color: var(--white); text-decoration: underline; }
 
 .foot-end {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
-    gap: var(--s4);
+    gap: var(--s3) var(--s5);
     padding-top: var(--s5);
     font-size: 13.5px;
     color: #8FA298;
 }
 
+.foot-credit { font-size: 12px; }
+
+.foot-credit a { text-decoration: underline; }
 
 /* ==================== PAGINA SERVICII (listă) ==================== */
 
-/* Capul paginii. `max-width` merge pe paragraf, nu pe secțiune —
-   pusă pe secțiune, strânge și `.wrap` și strică centrarea grilei. */
 .phead { padding-block: var(--s8) 0; }
-.phead h1 {
-    margin: 0 0 var(--s4);
-    font-size: clamp(34px, 4.4vw, 48px);
-    letter-spacing: -.028em;
-}
+
+.phead h1 { margin: 0 0 var(--s4); font-size: clamp(34px, 4.4vw, 48px); letter-spacing: -.028em; }
+
 .phead p {
     max-width: 52ch;
     margin: 0;
@@ -827,12 +875,12 @@ a.fact-v:hover { color: var(--green); text-decoration: underline; }
 }
 
 .cat { margin-bottom: var(--s8); scroll-margin-top: 90px; }
-.cat-head {
-    padding-bottom: var(--s4);
-    border-bottom: 2px solid var(--green);
-}
+
+.cat-head { padding-bottom: var(--s4); border-bottom: 2px solid var(--green); }
+
 .cat-head h2 { margin: 0 0 5px; font-size: 26px; }
-.cat-head p  { margin: 0; color: var(--muted); font-size: 15.5px; }
+
+.cat-head p { margin: 0; color: var(--muted); font-size: 15.5px; }
 
 .row {
     display: grid;
@@ -842,48 +890,432 @@ a.fact-v:hover { color: var(--green); text-decoration: underline; }
     padding: var(--s4) 0;
     border-bottom: 1px solid var(--line);
 }
+
 .row-name { font-weight: 600; }
+
 .row-desc { color: var(--muted); font-size: 15px; }
-.row-dur, .row-price {
-    text-align: right;
-    font-variant-numeric: tabular-nums;
-    font-size: 15px;
-}
+
+.row-dur, .row-price { text-align: right; font-variant-numeric: tabular-nums; font-size: 15px; }
+
 .row-price { font-weight: 600; }
 
+/* ==================== PROGRAMARE ==================== */
 
-/* ============================= MOBIL ============================= */
+.book { max-width: 880px; }
+
+.book-title {
+    margin: 0 0 var(--s3);
+    font-size: clamp(28px, 3.6vw, 40px);
+    font-weight: 600;
+    letter-spacing: -.028em;
+}
+
+.book-lead {
+    max-width: 52ch;
+    margin: 0 0 var(--s6);
+    color: var(--muted);
+    font-size: 17px;
+}
+
+.steps {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s2) var(--s5);
+    margin: 0 0 var(--s6);
+    padding: 0 0 var(--s5);
+    border-bottom: 1px solid var(--line);
+    list-style: none;
+    font-size: 14px;
+}
+
+.step {
+    display: flex;
+    align-items: center;
+    gap: var(--s2);
+    color: var(--muted);
+}
+
+.step a {
+    display: flex;
+    align-items: center;
+    gap: var(--s2);
+    color: inherit;
+    text-decoration: none;
+}
+
+.step a:hover { color: var(--green); }
+
+.step-n {
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    border: 1px solid var(--line-strong);
+    border-radius: 50%;
+    font-size: 12.5px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.step-now { color: var(--ink); font-weight: 600; }
+
+.step-now .step-n { background: var(--green); border-color: var(--green); color: var(--white); }
+
+.step-done .step-n { background: var(--green-tint); border-color: var(--green-tint); color: var(--green); }
+
+.book-form { max-width: 46rem; }
+
+.field { margin-bottom: var(--s5); }
+
+.field > label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.field input[type="text"],
+.field input[type="tel"],
+.field input[type="email"],
+.field select,
+.field textarea {
+    width: 100%;
+    padding: 12px 14px;
+    background: var(--white);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-sm);
+    font-size: 16px;
+    color: var(--ink);
+}
+
+.field textarea { resize: vertical; line-height: 1.55; }
+
+.field input:focus, .field select:focus, .field textarea:focus {
+    border-color: var(--green);
+    outline: 2px solid var(--green-tint);
+    outline-offset: 0;
+}
+
+.field-phone {
+    display: grid;
+    grid-template-columns: minmax(0, 170px) minmax(0, 1fr);
+    gap: var(--s2);
+    align-items: start;
+}
+
+.field-phone > label, .field-phone > .field-error { grid-column: 1 / -1; }
+
+.field-phone > label { margin-bottom: 0; }
+
+.field-hint { margin: 6px 0 0; font-size: 13.5px; color: var(--muted); }
+
+.field-error {
+    margin: 6px 0 0;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--bad-ink);
+}
+
+.pick { padding: 0; border: 0; }
+
+.pick-title {
+    padding: 0;
+    margin-bottom: var(--s3);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.pick-note { margin-left: 6px; color: var(--muted); font-weight: 400; }
+
+.pick-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: var(--s2); }
+
+.pick-item {
+    display: flex;
+    align-items: center;
+    gap: var(--s3);
+    padding: 12px 14px;
+    background: var(--white);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-sm);
+    font-size: 15px;
+    cursor: pointer;
+    transition: border-color .16s ease, background-color .16s ease;
+}
+
+.pick-item:hover { border-color: var(--green); }
+
+.pick-item:has(input:checked) { border-color: var(--green); background: var(--green-tint); font-weight: 600; }
+
+.pick-item:has(input:focus-visible) { outline: 2px solid var(--green); outline-offset: 2px; }
+
+.recap {
+    position: relative;
+    margin-bottom: var(--s6);
+    padding: var(--s5);
+    background: var(--green-tint);
+    border-radius: var(--r-md);
+}
+
+.recap-wide { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--s5); }
+
+.recap-k {
+    margin: 0 0 4px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--green);
+}
+
+.recap-v {
+    margin: 0;
+    font-size: 15.5px;
+    line-height: 1.5;
+    color: var(--ink);
+}
+
+.recap-strong { font-size: 17px; font-weight: 600; letter-spacing: -.015em; }
+
+.recap-tag {
+    display: inline-block;
+    margin: var(--s2) 0 0;
+    padding: 3px 10px;
+    background: var(--white);
+    border-radius: var(--r-pill);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--green);
+}
+
+.recap-edit {
+    display: inline-block;
+    margin-top: var(--s2);
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--green);
+}
+
+.book-cal {
+    display: grid;
+    grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
+    gap: var(--s7);
+    align-items: start;
+}
+
+.cal {
+    padding: var(--s4);
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+}
+
+.cal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--s4);
+}
+
+.cal-month {
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -.015em;
+    text-transform: capitalize;
+}
+
+.cal-step {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-sm);
+    color: var(--green);
+    font-size: 18px;
+    text-decoration: none;
+}
+
+.cal-step:hover { border-color: var(--green); background: var(--green-tint); }
+
+.cal-step.is-off { color: var(--line-strong); border-color: var(--line); cursor: default; }
+
+.cal-week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+
+.cal-wd {
+    padding: 4px 0;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+    text-decoration: none;
+}
+
+.cal-day {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 1;
+    border-radius: var(--r-sm);
+    font-size: 14.5px;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+    text-decoration: none;
+}
+
+a.cal-day:not(.is-on):hover { background: var(--green-tint); }
+
+.cal-day.is-today { font-weight: 700; box-shadow: inset 0 0 0 1px var(--line-strong); }
+
+.cal-day.is-on {
+    background: var(--green);
+    color: var(--white);
+    font-weight: 700;
+    box-shadow: none;
+}
+
+.cal-day.is-off { color: var(--line-strong); text-decoration: line-through; }
+
+.cal-day.is-out { color: transparent; }
+
+.hours-pane { padding-top: var(--s2); }
+
+.hours-day {
+    margin: 0 0 var(--s4);
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -.015em;
+    text-transform: capitalize;
+}
+
+.hours-part {
+    margin: var(--s5) 0 var(--s3);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--muted);
+}
+
+.hours-part:first-of-type { margin-top: 0; }
+
+.book .hours {
+    width: 100%;
+    margin-top: var(--s3);
+    font-size: 15.5px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+    gap: var(--s2);
+}
+
+.hour {
+    display: grid;
+    place-items: center;
+    padding: 14px 6px;
+    background: var(--white);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-sm);
+    font-size: 15.5px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+    text-decoration: none;
+    transition: background-color .16s ease, border-color .16s ease, color .16s ease;
+}
+
+.hour:hover { background: var(--green); border-color: var(--green); color: var(--white); }
+
+.hours-empty { margin: 0 0 var(--s4); color: var(--muted); font-size: 15.5px; }
+
+.book-warn {
+    margin-bottom: var(--s6);
+    padding: var(--s5);
+    background: var(--bad-bg);
+    border-radius: var(--r-md);
+    color: var(--bad-ink);
+}
+
+.book-warn p:last-child { margin-bottom: 0; }
+
+.book-warn .hours { margin-bottom: var(--s4); }
+
+.book-pending {
+    margin: var(--s5) 0;
+    padding: var(--s4) var(--s5);
+    background: var(--green-tint);
+    border-left: 3px solid var(--green);
+    border-radius: 0 var(--r-sm) var(--r-sm) 0;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink);
+}
+
+.book-done { max-width: 680px; }
+
+.done-mark {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    margin: 0 0 var(--s5);
+    background: var(--green);
+    border-radius: 50%;
+    color: var(--white);
+}
+
+.done-mark svg { width: 26px; height: 26px; }
+
+.done-state {
+    display: inline-block;
+    margin: 0 0 var(--s6);
+    padding: 8px 16px;
+    background: var(--warn-bg);
+    border-radius: var(--r-pill);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--warn-ink);
+}
+
+.done-next { margin: var(--s6) 0 var(--s4); font-size: 20px; font-weight: 600; }
+
+.done-list {
+    margin: 0 0 var(--s6);
+    padding-left: 1.2em;
+    color: var(--ink-2);
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+.done-list li { margin-bottom: var(--s3); }
+
+.done-urgent {
+    padding: var(--s4) var(--s5);
+    background: var(--green-tint);
+    border-radius: var(--r-md);
+    font-size: 15.5px;
+}
+
+.done-urgent a { font-weight: 700; color: var(--green); }
+
+/* ==================== RESPONSIVE — SITE ȘI PROGRAMARE ==================== */
 
 @media (max-width: 980px) {
-    .hero-in,
-    .doc-in,
-    .contact-in { grid-template-columns: minmax(0, 1fr); gap: var(--s7); }
-
-    /* Sub 980px scobitura e prea mică pentru coloana de scurtături,
-       așa că ies din ea și stau pe un rând, sub formă. */
-    .stage {
-        max-width: 420px;
-    }
-    .shape-wrap { width: 100%; }
-    .shortcuts { position: static; flex-direction: row; gap: var(--s2); }
-    .shortcut  { width: 46px; height: 46px; }
+    .doc-in, .contact-in { grid-template-columns: minmax(0, 1fr); gap: var(--s7); }
 
     .svc-grid { grid-template-columns: repeat(2, 1fr); }
-    .std-row  { grid-template-columns: minmax(0, 1fr); gap: var(--s2); }
+
+    .std-row { grid-template-columns: minmax(0, 1fr); gap: var(--s2); }
 }
 
 @media (max-width: 768px) {
     body { font-size: 16px; }
 
-    .band       { padding-block: var(--s8); }
+    .band { padding-block: var(--s8); }
+
     .band-tight { padding-block: var(--s7); }
 
     .burger { display: block; }
+
     .topnav-in { position: relative; }
 
     .navlinks {
         position: absolute;
-        left: 0; right: 0;
+        left: 0;
+        right: 0;
         top: 100%;
         flex-direction: column;
         align-items: stretch;
@@ -893,54 +1325,50 @@ a.fact-v:hover { color: var(--green); text-decoration: underline; }
         border-bottom: 1px solid var(--line);
         box-shadow: var(--lift);
     }
-    .navlinks a:not(.btn) {
-        padding: var(--s3) 0;
-        border-bottom: 1px solid var(--line);
-    }
+
+    .navlinks a:not(.btn) { padding: var(--s3) 0; border-bottom: 1px solid var(--line); }
+
     .nav-cta { margin-top: var(--s4); }
 
-
-
     .factbar-in { grid-template-columns: minmax(0, 1fr); }
-    .fact-cell {
-        border-left: 0;
-        border-top: 1px solid var(--line);
-        padding: var(--s4) 0;
-    }
+
+    .fact-cell { border-left: 0; border-top: 1px solid var(--line); padding: var(--s4) 0; }
+
     .fact-cell:first-child { border-top: 0; }
 
     .visit { grid-template-columns: minmax(0, 1fr); border-top: 0; }
-    .visit-step {
-        padding: var(--s5) 0;
-        border-left: 0;
-        border-top: 1px solid var(--line);
-    }
+
+    .visit-step { padding: var(--s5) 0; border-left: 0; border-top: 1px solid var(--line); }
+
     .visit-step:first-child { border-top: 0; padding-top: 0; }
 
     .svc-grid, .ba-grid { grid-template-columns: minmax(0, 1fr); }
+
     .foot-grid { grid-template-columns: minmax(0, 1fr); gap: var(--s6); }
-    .foot-end  { flex-direction: column; gap: var(--s2); }
+
+    .foot-end { flex-direction: column; gap: var(--s2); }
 
     .row { grid-template-columns: minmax(0, 1fr) 100px; }
+
     .row-desc { grid-column: 1 / -1; }
 
     .urgency { font-size: 12.5px; }
-    .urgency-in { min-height: 38px; }
-}
 
-@media (max-width: 560px) {
-    /* Pastilele se strâng, dar rămân pastile — sub 12px textul din
-       ele nu se mai citește pe un ecran de telefon. */
-    .plus {
-        max-width: 56%;
-        padding: 6px 12px 6px 6px;
-        gap: 7px;
-        font-size: 12.5px;
-    }
-    .plus i { width: 21px; height: 21px; font-size: 13px; }
+    .urgency-in { min-height: 38px; }
+
+    .book-cal { grid-template-columns: minmax(0, 1fr); gap: var(--s6); }
+
+    .cal { max-width: 420px; }
 }
 
 @media (max-width: 400px) {
-    .hero-do .btn-lg { width: 100%; }
-    .shortcuts { gap: 4px; }
+    .steps { font-size: 13px; gap: var(--s2) var(--s4); }
+
+    .step-name { display: none; }
+
+    .step-now .step-name { display: inline; }
+
+    .book .hours { grid-template-columns: repeat(auto-fill, minmax(74px, 1fr)); }
+
+    .pick-grid { grid-template-columns: minmax(0, 1fr); }
 }

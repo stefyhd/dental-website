@@ -1,51 +1,61 @@
 {% extends "base.html" %}
 
-{% block title %}Programare{% endblock %}
+{% block title %}Programare — {{ clinic.name }}{% endblock %}
 
 {% block content %}
-<h1>Programează-te</h1>
+<section class="band-tight">
+    <div class="wrap book">
 
-<form method="get">
-    <label>Serviciu</label>
+        {% include "bookings/_steps.html" %}
 
-    <select name="service" required>
-        <option value="">Alege serviciul</option>
+        <h1 class="book-title">Ce te supără?</h1>
+        <p class="book-lead">
+            Scrie cu cuvintele tale. Nu e nevoie să știi cum se cheamă —
+            asta e treaba medicului.
+        </p>
 
-        {% for service in services %}
-            <option value="{{ service.id }}"
-                {% if selected_service.id == service.id %}selected{% endif %}>
-                {{ service.name }} — {{ service.duration }} min
-            </option>
-        {% endfor %}
-    </select>
+        <form method="post" class="book-form" novalidate>
+            {% csrf_token %}
 
-    <label>Data</label>
+            <div class="field">
+                {{ form.notes }}
+                {% if form.notes.errors %}
+                    <p class="field-error">{{ form.notes.errors.0 }}</p>
+                {% endif %}
+                {% comment %}
+                Nota asta nu e decor. Ce scrie pacientul aici e dată
+                medicală — categorie specială sub GDPR. Îi spunem din
+                start că nu trebuie să-și scrie fișa aici.
+                {% endcomment %}
+                <p class="field-hint">
+                    Câteva rânduri ajung. Detaliile medicale le discutăm
+                    la cabinet, nu e nevoie să le scrii aici.
+                </p>
+            </div>
 
-    <input
-        type="date"
-        name="date"
-        value="{{ selected_date|date:'Y-m-d' }}"
-        required
-    >
+            {% if form.fields.category.queryset %}
+                <fieldset class="field pick">
+                    <legend class="pick-title">
+                        Știi deja de ce ai nevoie?
+                        <span class="pick-note">Opțional</span>
+                    </legend>
 
-    <button type="submit">Vezi orele disponibile</button>
-</form>
+                    <div class="pick-grid">
+                        {% for choice in form.category %}
+                            <label class="pick-item">
+                                {{ choice.tag }}
+                                <span>{{ choice.choice_label }}</span>
+                            </label>
+                        {% endfor %}
+                    </div>
+                </fieldset>
+            {% endif %}
 
-{% if selected_service and selected_date %}
-    <h2>Ore disponibile</h2>
-
-    {% for slot in slots %}
-        <form method="get" action="{% url 'booking_details' %}">
-            <input type="hidden" name="service" value="{{ selected_service.id }}">
-            <input type="hidden" name="date" value="{{ selected_date|date:'Y-m-d' }}">
-            <input type="hidden" name="time" value="{{ slot|time:'H:i' }}">
-
-            <button type="submit">
-                {{ slot|time:"H:i" }}
+            <button class="btn btn-solid btn-lg" type="submit">
+                Continuă
             </button>
         </form>
-    {% empty %}
-        <p>Nu există ore disponibile în această zi.</p>
-    {% endfor %}
-{% endif %}
+
+    </div>
+</section>
 {% endblock %}

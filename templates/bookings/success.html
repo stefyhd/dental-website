@@ -1,14 +1,62 @@
 {% extends "base.html" %}
 
-{% block title %}Programare trimisă{% endblock %}
+{% block title %}Cerere trimisă — {{ clinic.name }}{% endblock %}
 
 {% block content %}
-<h1>Cererea a fost trimisă!</h1>
+<section class="band-tight">
+    <div class="wrap book book-done">
 
-<p>
-    Programarea ta este în curs de confirmare.
-    Vei primi confirmarea după verificarea medicului.
-</p>
+        <p class="done-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 12.5 9.5 18 20 6.5"/>
+            </svg>
+        </p>
 
-<a href="/">Înapoi acasă</a>
+        <h1 class="book-title">Cererea a fost trimisă</h1>
+
+        {% comment %}
+        Starea, scrisă mare și fără ocolișuri. Un cabinet care spune
+        „mulțumim!" și atât lasă omul să creadă că e programat.
+        {% endcomment %}
+        <p class="done-state">În așteptarea confirmării medicului</p>
+
+        {% if appointment %}
+            <div class="recap recap-wide">
+                <div>
+                    <p class="recap-k">Când ai cerut</p>
+                    <p class="recap-v recap-strong">
+                        {{ appointment.date|date:"l, j F Y" }},
+                        ora {{ appointment.time|time:"H:i" }}
+                    </p>
+                </div>
+                <div>
+                    <p class="recap-k">Ce ai scris</p>
+                    <p class="recap-v">{{ appointment.notes }}</p>
+                    {% if appointment.category %}
+                        <p class="recap-tag">{{ appointment.category.name }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+
+        <h2 class="done-next">Ce urmează</h2>
+        <ol class="done-list">
+            <li>Medicul se uită peste cerere.</li>
+            <li>
+                Te sunăm la numărul lăsat, în timpul programului, ca să
+                confirmăm ora — sau să-ți propunem alta, dacă e nevoie.
+            </li>
+            <li>Abia după telefon programarea e sigură.</li>
+        </ol>
+
+        <p class="done-urgent">
+            Dacă te doare tare și nu poți aștepta, sună direct:
+            <a href="tel:{{ clinic.phone_raw }}">{{ clinic.phone_display }}</a>
+        </p>
+
+        <a class="btn btn-line" href="{% url 'home' %}">Înapoi la pagina principală</a>
+
+    </div>
+</section>
 {% endblock %}

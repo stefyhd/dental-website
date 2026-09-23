@@ -27,9 +27,21 @@
             </div>
         </div>
 
+        {% comment %}
+        Creditul pentru modelul 3D din hero NU e opțional: licența
+        CC-BY-4.0 permite folosirea comercială, dar cere ca autorul să
+        fie numit vizibil. Dacă înlocuiești modelul, înlocuiește și
+        rândul ăsta.
+        {% endcomment %}
         <div class="foot-end">
             <span>&copy; {% now "Y" %} {{ clinic.name }}</span>
             <span>Politica de confidențialitate · Termeni</span>
+            <span class="foot-credit">
+                Model 3D „Molar_Tooth" de
+                <a href="https://sketchfab.com/mastart" target="_blank" rel="noopener">Mastart</a>,
+                licență
+                <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC-BY-4.0</a>
+            </span>
         </div>
 
     </div>

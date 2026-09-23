@@ -61,6 +61,13 @@ class Service(models.Model):
     )
     order = models.PositiveIntegerField(default=0)
     is_active = models.BooleanField(default=True)
+    is_default = models.BooleanField(
+        default=False,
+        help_text=(
+            "Serviciul pus automat pe cererile în care pacientul doar "
+            "descrie problema. Bifează unul singur — de regulă consultația."
+        ),
+    )
 
     class Meta:
         ordering = ["order", "name"]
@@ -126,6 +133,16 @@ class Appointment(models.Model):
         Service,
         on_delete=models.PROTECT,
         related_name="appointments",
+    )
+    # Ce a bifat pacientul la pasul 1, dacă a bifat ceva. E doar un
+    # indiciu pentru medic — serviciul real îl stabilește el la
+    # confirmare. De-asta e separat de `service`, nu în locul lui.
+    category = models.ForeignKey(
+        ServiceCategory,
+        on_delete=models.PROTECT,
+        related_name="appointments",
+        null=True,
+        blank=True,
     )
 
     date = models.DateField()

@@ -1,0 +1,38 @@
+{% comment %}
+Indicatorul de pași. Variabila `step` (1, 2 sau 3) vine din view.
+
+Pașii parcurși sunt linkuri — pacientul se poate întoarce să schimbe ce a
+scris. Pasul curent și cele viitoare nu sunt linkuri: la pasul 3 n-ai ce
+căuta dacă n-ai ales ora.
+{% endcomment %}
+
+<ol class="steps" aria-label="Pașii programării">
+    <li class="step {% if step > 1 %}step-done{% elif step == 1 %}step-now{% endif %}">
+        {% if step > 1 %}
+            <a href="{% url 'booking' %}">
+                <span class="step-n">1</span>
+                <span class="step-name">Ce te supără</span>
+            </a>
+        {% else %}
+            <span class="step-n">1</span>
+            <span class="step-name">Ce te supără</span>
+        {% endif %}
+    </li>
+
+    <li class="step {% if step > 2 %}step-done{% elif step == 2 %}step-now{% endif %}">
+        {% if step > 2 %}
+            <a href="{% url 'booking_date' %}">
+                <span class="step-n">2</span>
+                <span class="step-name">Data și ora</span>
+            </a>
+        {% else %}
+            <span class="step-n">2</span>
+            <span class="step-name">Data și ora</span>
+        {% endif %}
+    </li>
+
+    <li class="step {% if step == 3 %}step-now{% endif %}">
+        <span class="step-n">3</span>
+        <span class="step-name">Date de contact</span>
+    </li>
+</ol>
